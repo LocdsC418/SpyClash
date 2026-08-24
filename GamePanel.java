@@ -12,10 +12,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     final int WIDTH = 800;
     final int HEIGHT = 500;
+    final int GROUND = 350;
+    final int GRAVITY = 1;
+    final int JUMP_FORCE = -15;
 
     int playerX = 100;
-    int playerY = 350;
+    int playerY = GROUND;
     int speed = 5;
+    int velocityY = 0;
+    boolean onGround = true;
 
     boolean leftPressed = false;
     boolean rightPressed = false;
@@ -35,6 +40,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, GROUND + 100, WIDTH, HEIGHT);
+
         g.setColor(Color.RED);
         g.fillRect(playerX, playerY, 50, 100);
     }
@@ -46,6 +55,16 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         if (playerX < 0) { playerX = 0; }
         if (playerX > WIDTH - 50) { playerX = WIDTH - 50; }
 
+        if (!onGround) {
+            velocityY += GRAVITY;
+            playerY += velocityY;
+
+            if (playerY >= GROUND) {
+                playerY = GROUND;
+                velocityY = 0;
+                onGround = true;
+            }
+        }
         repaint();
     }
 
@@ -56,6 +75,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             rightPressed = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_UP && onGround) {
+            velocityY = JUMP_FORCE;
+            onGround = false;
         }
     }
 
