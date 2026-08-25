@@ -13,17 +13,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     final int WIDTH = 800;
     final int HEIGHT = 500;
     final int GROUND = 350;
-    final int GRAVITY = 1;
-    final int JUMP_FORCE = -15;
 
-    int playerX = 100;
-    int playerY = GROUND;
-    int speed = 5;
-    int velocityY = 0;
-    boolean onGround = true;
-
-    boolean leftPressed = false;
-    boolean rightPressed = false;
+    Fighter player1;
+    Fighter player2;
 
     Timer timer;
 
@@ -32,6 +24,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(this);
+
+        player1 = new Fighter(100, Color.RED);
+        player2 = new Fighter(600, Color.BLUE);
 
         timer = new Timer(16, this);
         timer.start();
@@ -44,51 +39,57 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, GROUND + 100, WIDTH, HEIGHT);
 
-        g.setColor(Color.RED);
-        g.fillRect(playerX, playerY, 50, 100);
+        player1.draw(g);
+        player2.draw(g);
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (leftPressed) { playerX -= speed; }
-        if (rightPressed) { playerX += speed; }
-        if (playerX < 0) { playerX = 0; }
-        if (playerX > WIDTH - 50) { playerX = WIDTH - 50; }
+        player1.update();
+        player2.update();
 
-        if (!onGround) {
-            velocityY += GRAVITY;
-            playerY += velocityY;
-
-            if (playerY >= GROUND) {
-                playerY = GROUND;
-                velocityY = 0;
-                onGround = true;
-            }
-        }
         repaint();
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            leftPressed = true;
+            player1.setLeftPressed(true);
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            rightPressed = true;
+            player1.setRightPressed(true);
         }
-        if (e.getKeyCode() == KeyEvent.VK_UP && onGround) {
-            velocityY = JUMP_FORCE;
-            onGround = false;
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            player1.jump();
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_A) {
+            player2.setLeftPressed(true);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_D) {
+            player2.setRightPressed(true);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+            player2.jump();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            leftPressed = false;
+            player1.setLeftPressed(false);
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            rightPressed = false;
+            player1.setRightPressed(false);
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_A) {
+            player2. setLeftPressed(false);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_D) {
+            player2.setRightPressed(false);
         }
     }
 
