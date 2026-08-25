@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class Fighter {
 
@@ -20,6 +21,16 @@ public class Fighter {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
+    private int maxHP = 100;
+    private int hp = 100;
+
+    private boolean attacking = false;
+    private int attackTimer = 0;
+    private final int ATTACK_DURATION = 15;
+    private final int ATTACK_RANGE = 60;
+    private final int ATTACK_DAMAGE = 10;
+    private int facingDirection = 1;
+
     public Fighter(int startX, Color color) {
         this.x = startX;
         this.y = GROUND;
@@ -29,9 +40,11 @@ public class Fighter {
     public void update() {
         if (leftPressed){
             x -= speed;
+            facingDirection = -1;
         }
         if (rightPressed){
             x += speed;
+            facingDirection = 1;
         }
 
         if (x<0){
@@ -51,11 +64,57 @@ public class Fighter {
                 onGround = true;
             }
         }
+
+        if (attacking) {
+            attackTimer++;
+            if (attackTimer >= ATTACK_DURATION) {
+                attacking = false;
+                attackTimer = 0;
+            }
+        }
     }
 
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillRect(x, y, width, height);
+
+        if (attacking) {
+            g.setColor(Color.YELLOW);
+            if (facingDirection == 1) {
+                g.fillRect(x + width, y + 20, ATTACK_RANGE, 15);
+            } else {
+                g.fillRect(x - ATTACK_RANGE, y + 20, ATTACK_RANGE, 15);
+            }
+        }
+    }
+
+    public void attack() {
+        if (!attacking) {
+            attacking = true;
+            attackTimer = 0;
+        }
+    }
+
+    public Rectangle getAttackHitbox() {
+        if (!attacking || attackTimer != 1) {
+            return null;
+        }
+        if (facingDirection == 1) {
+            return new Rectangle(x + width, y + 20, ATTACK_RANGE, 15);
+        } else {
+            return new Rectangle(x - ATTACK_RANGE, y + 20, ATTACK_RANGE, 15);
+        }
+    }
+
+    public Rectangle getBodyHitbox() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    public void takeDamage(int damage) {
+        hp -= damage;
+        if (hp < 0) {
+            hp = 0;
+        }
     }
 
     public void jump() {
@@ -76,6 +135,11 @@ public class Fighter {
     public int getX() { return x; }
     public int getY() { return y; }
     public int getWidth() { return width; }
-    public int getHeight() {return height; }
+    public int getHeight() { return height; }
+
+    public int getHP() { return hp; }
+    public int getMaxHP() { return maxHP; }
+    public boolean isAlive() { return hp > 0; }
+    public int getAttackDamage() { return ATTACK_DAMAGE; }
 
 }
