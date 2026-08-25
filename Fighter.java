@@ -2,48 +2,57 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-public class Fighter {
+public abstract class Fighter {
 
     private int x;
     private int y;
     private int width = 50;
     private int height = 100;
-    private int speed = 5;
+//    private int speed = 5;
     private int velocityY = 0;
     private Color color;
 
     private final int GROUND = 350;
     private final int GRAVITY = 1;
-    private final int JUMP_FORCE = -15;
+//    private final int JUMP_FORCE = -15;
     private final int SCREEN_WIDTH = 800;
 
     private boolean onGround = true;
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
-    private int maxHP = 100;
-    private int hp = 100;
+    private int maxHP;
+    private int hp;
 
     private boolean attacking = false;
     private int attackTimer = 0;
-    private final int ATTACK_DURATION = 15;
-    private final int ATTACK_RANGE = 60;
-    private final int ATTACK_DAMAGE = 10;
+//    private final int ATTACK_DURATION = 15;
+//    private final int ATTACK_RANGE = 60;
+//    private final int ATTACK_DAMAGE = 10;
     private int facingDirection = 1;
 
-    public Fighter(int startX, Color color) {
+    public abstract int getSpeed();
+    public abstract int getJumpForce();
+    public abstract int getAttackRange();
+    public abstract int getAttackDamage();
+    public abstract int getAttackDuration();
+    public abstract String getName();
+
+    public Fighter(int startX, Color color, int maxHP) {
         this.x = startX;
         this.y = GROUND;
         this.color = color;
+        this.maxHP = maxHP;
+        this.hp = maxHP;
     }
 
     public void update() {
         if (leftPressed){
-            x -= speed;
+            x -= getSpeed();
             facingDirection = -1;
         }
         if (rightPressed){
-            x += speed;
+            x += getSpeed();
             facingDirection = 1;
         }
 
@@ -67,7 +76,7 @@ public class Fighter {
 
         if (attacking) {
             attackTimer++;
-            if (attackTimer >= ATTACK_DURATION) {
+            if (attackTimer >= getAttackDuration()) {
                 attacking = false;
                 attackTimer = 0;
             }
@@ -81,9 +90,9 @@ public class Fighter {
         if (attacking) {
             g.setColor(Color.YELLOW);
             if (facingDirection == 1) {
-                g.fillRect(x + width, y + 20, ATTACK_RANGE, 15);
+                g.fillRect(x + width, y + 20, getAttackRange(), 15);
             } else {
-                g.fillRect(x - ATTACK_RANGE, y + 20, ATTACK_RANGE, 15);
+                g.fillRect(x - getAttackRange(), y + 20, getAttackRange(), 15);
             }
         }
     }
@@ -95,14 +104,21 @@ public class Fighter {
         }
     }
 
+    public void jump() {
+        if (onGround) {
+            velocityY = getJumpForce();
+            onGround = false;
+        }
+    }
+
     public Rectangle getAttackHitbox() {
         if (!attacking || attackTimer != 1) {
             return null;
         }
         if (facingDirection == 1) {
-            return new Rectangle(x + width, y + 20, ATTACK_RANGE, 15);
+            return new Rectangle(x + width, y + 20, getAttackRange(), 15);
         } else {
-            return new Rectangle(x - ATTACK_RANGE, y + 20, ATTACK_RANGE, 15);
+            return new Rectangle(x - getAttackRange(), y + 20, getAttackRange(), 15);
         }
     }
 
@@ -117,12 +133,7 @@ public class Fighter {
         }
     }
 
-    public void jump() {
-        if (onGround) {
-            velocityY = JUMP_FORCE;
-            onGround = false;
-        }
-    }
+
 
     public void setLeftPressed(boolean pressed) {
         this.leftPressed = pressed;
@@ -140,6 +151,5 @@ public class Fighter {
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
     public boolean isAlive() { return hp > 0; }
-    public int getAttackDamage() { return ATTACK_DAMAGE; }
 
 }

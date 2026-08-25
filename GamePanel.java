@@ -33,8 +33,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        player1 = new Fighter(100, Color.RED);
-        player2 = new Fighter(600, Color.BLUE);
+        player1 = new Ninja(100, Color.RED);
+        player2 = new Boxer(600, Color.BLUE);
 
         hpBar1 = new HealthBar(20, 40);
         hpBar2 = new HealthBar(580, 40);
@@ -53,8 +53,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         player1.draw(g);
         player2.draw(g);
 
-        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player 1 [Arrow + /]");
-        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player 2 [WASD + F]");
+        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[Arrow + /]");
+        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[WASD + F]");
 
         if (gameOver) {
             g.setColor(Color.WHITE);
@@ -105,8 +105,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     public void keyPressed(KeyEvent e) {
 
         if (e.getKeyCode() == KeyEvent.VK_R && gameOver) {
-            player1 = new Fighter(100, Color.RED);
-            player2 = new Fighter(600, Color.BLUE);
+            player1 = new Ninja(100, Color.RED);
+            player2 = new Boxer(600, Color.BLUE);
             gameOver = false;
             winnerText = "";
             return;
