@@ -2,19 +2,17 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-public abstract class Fighter {
+public abstract class Fighter implements Movable, Attackable {
 
     private int x;
     private int y;
     private int width = 50;
     private int height = 100;
-//    private int speed = 5;
     private int velocityY = 0;
     private Color color;
 
     private final int GROUND = 350;
     private final int GRAVITY = 1;
-//    private final int JUMP_FORCE = -15;
     private final int SCREEN_WIDTH = 800;
 
     private boolean onGround = true;
@@ -97,6 +95,7 @@ public abstract class Fighter {
         }
     }
 
+    @Override
     public void attack() {
         if (!attacking) {
             attacking = true;
@@ -104,11 +103,33 @@ public abstract class Fighter {
         }
     }
 
+    @Override
     public void jump() {
         if (onGround) {
             velocityY = getJumpForce();
             onGround = false;
         }
+    }
+
+    @Override
+    public void takeDamage(int damage) {
+        hp -= damage;
+        if (hp < 0) {
+            hp = 0;
+        }
+    }
+
+    @Override
+    public boolean isAlive() { return hp > 0; }
+
+    @Override
+    public void setLeftPressed(boolean pressed) {
+        this.leftPressed = pressed;
+    }
+
+    @Override
+    public void setRightPressed(boolean pressed) {
+        this.rightPressed = pressed;
     }
 
     public Rectangle getAttackHitbox() {
@@ -126,23 +147,6 @@ public abstract class Fighter {
         return new Rectangle(x, y, width, height);
     }
 
-    public void takeDamage(int damage) {
-        hp -= damage;
-        if (hp < 0) {
-            hp = 0;
-        }
-    }
-
-
-
-    public void setLeftPressed(boolean pressed) {
-        this.leftPressed = pressed;
-    }
-
-    public void setRightPressed(boolean pressed) {
-        this.rightPressed = pressed;
-    }
-
     public int getX() { return x; }
     public int getY() { return y; }
     public int getWidth() { return width; }
@@ -150,6 +154,5 @@ public abstract class Fighter {
 
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
-    public boolean isAlive() { return hp > 0; }
 
 }
