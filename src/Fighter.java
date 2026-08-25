@@ -1,3 +1,5 @@
+package src;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -22,6 +24,8 @@ public abstract class Fighter implements Movable, Attackable {
     private int maxHP;
     private int hp;
 
+    private int jumpCount = 0;
+
     private boolean attacking = false;
     private int attackTimer = 0;
 //    private final int ATTACK_DURATION = 15;
@@ -36,6 +40,8 @@ public abstract class Fighter implements Movable, Attackable {
     public abstract int getAttackDuration();
     public abstract String getName();
 
+    public abstract boolean canDoubleJump();
+
     public Fighter(int startX, Color color, int maxHP) {
         this.x = startX;
         this.y = GROUND;
@@ -45,13 +51,16 @@ public abstract class Fighter implements Movable, Attackable {
     }
 
     public void update() {
-        if (leftPressed){
-            x -= getSpeed();
-            facingDirection = -1;
-        }
-        if (rightPressed){
-            x += getSpeed();
-            facingDirection = 1;
+
+        if (!attacking || !onGround) {
+            if (leftPressed){
+                x -= getSpeed();
+                facingDirection = -1;
+            }
+            if (rightPressed){
+                x += getSpeed();
+                facingDirection = 1;
+            }
         }
 
         if (x<0){
@@ -69,6 +78,7 @@ public abstract class Fighter implements Movable, Attackable {
                 y = GROUND;
                 velocityY = 0;
                 onGround = true;
+                jumpCount = 0;
             }
         }
 
@@ -105,9 +115,11 @@ public abstract class Fighter implements Movable, Attackable {
 
     @Override
     public void jump() {
-        if (onGround) {
+        int maxJump = canDoubleJump() ? 2 : 1;
+        if (jumpCount < maxJump) {
             velocityY = getJumpForce();
             onGround = false;
+            jumpCount++;
         }
     }
 
@@ -151,6 +163,10 @@ public abstract class Fighter implements Movable, Attackable {
     public int getY() { return y; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
+
+    public void setFacingDirection(int facingDirection) {
+        this.facingDirection = facingDirection;
+    }
 
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }

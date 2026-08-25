@@ -1,3 +1,5 @@
+package src;
+
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
@@ -213,6 +215,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private void startGame() {
         player1 = createFighter(p1Choice, 100, Color.RED);
         player2 = createFighter(p2Choice, 600, Color.BLUE);
+        player2.setFacingDirection(-1);
+
         hpBar1 = new HealthBar(20, 40);
         hpBar2 = new HealthBar(580, 40);
         selectingCharacter = false;

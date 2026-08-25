@@ -1,3 +1,5 @@
+package src;
+
 import java.awt.Color;
 
 public class Boxer extends Fighter {
@@ -23,4 +25,7 @@ public class Boxer extends Fighter {
 
     @Override
     public String getName() { return "Boxer"; }
+
+    @Override
+    public boolean canDoubleJump() { return false; }
 }
