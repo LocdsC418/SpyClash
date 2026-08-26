@@ -77,8 +77,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             player2.takeDamage(player1.getAttackDamage());
             freezeTimer = FREEZE_DURATION;
 
-            int  dir = (player1.getX() < player2.getX()) ? 15 : -15;
-            player2.getStunned(10, dir);
+            int  dir = (player1.getX() < player2.getX()) ? 20 : -20;
+            player2.getKnockBack(dir);
+            player2.getStunned(10);
         }
 
         Rectangle attack2 = player2.getAttackHitbox();
@@ -86,8 +87,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             player1.takeDamage(player2.getAttackDamage());
             freezeTimer = FREEZE_DURATION;
 
-            int  dir = (player2.getX() < player1.getX()) ? 15 : -15;
-            player1.getStunned(10, dir);
+            int  dir = (player2.getX() < player1.getX()) ? 20 : -20;
+            player1.getKnockBack(dir);
+            player1.getStunned(10);
         }
 
         if (!player1.isAlive()) {
@@ -122,8 +124,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         player1.draw(g);
         player2.draw(g);
 
-        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[Arrow + /]");
-        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[WASD + F]");
+        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[WASD + F]");
+        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[Arrow + /]");
 
         if (gameOver) {
             g.setColor(Color.WHITE);
@@ -144,19 +146,19 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         if (selectingCharacter) {
             if (!p1Ready) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_D) {
                     p1Choice = (p1Choice == 0) ? 1 : 0;
                 }
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (e.getKeyCode() == KeyEvent.VK_F) {
                     p1Ready = true;
                 }
             }
 
             if (!p2Ready) {
-                if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_D) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     p2Choice = (p2Choice == 0) ? 1 : 0;
                 }
-                if (e.getKeyCode() == KeyEvent.VK_F) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     p2Ready = true;
                 }
             }
@@ -169,53 +171,59 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         if (e.getKeyCode() == KeyEvent.VK_R && gameOver) {
             selectingCharacter = true;
+            gameOver = false;
             p1Ready = false;
             p2Ready = false;
             return;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            player1.setLeftPressed(true);
-        }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            player1.setRightPressed(true);
-        }
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            player1.jump();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_SLASH) {
-            player1.attack();
+        if (!player1.isStunned()) {
+            if (e.getKeyCode() == KeyEvent.VK_A) {
+                player1.setLeftPressed(true);
+            }
+            if (e.getKeyCode() == KeyEvent.VK_D) {
+                player1.setRightPressed(true);
+            }
+            if (e.getKeyCode() == KeyEvent.VK_W) {
+                player1.jump();
+            }
+            if (e.getKeyCode() == KeyEvent.VK_F) {
+                player1.attack();
+            }
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_A) {
-            player2.setLeftPressed(true);
+        if (!player2.isStunned()) {
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                player2.setLeftPressed(true);
+            }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                player2.setRightPressed(true);
+            }
+            if (e.getKeyCode() == KeyEvent.VK_UP) {
+                player2.jump();
+            }
+            if (e.getKeyCode() == KeyEvent.VK_SLASH) {
+                player2.attack();
+            }
         }
-        if (e.getKeyCode() == KeyEvent.VK_D) {
-            player2.setRightPressed(true);
-        }
-        if (e.getKeyCode() == KeyEvent.VK_W) {
-            player2.jump();
-        }
-        if (e.getKeyCode() == KeyEvent.VK_F) {
-            player2.attack();
-        }
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         if (selectingCharacter) return;
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             player1.setLeftPressed(false);
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_D) {
             player1.setRightPressed(false);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_A) {
-            player2. setLeftPressed(false);
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            player2.setLeftPressed(false);
         }
-        if (e.getKeyCode() == KeyEvent.VK_D) {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             player2.setRightPressed(false);
         }
     }
@@ -297,8 +305,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         g.setColor(Color.GRAY);
         g.setFont(new Font("Arial", Font.PLAIN, 14));
-        String help1 = "P1: Arrow Left/Right to choose, ENTER to confirm";
-        String help2 = "P2: A/D to choose, F to confirm";
+        String help1 = "P1: A/D to choose, F to confirm";
+        String help2 = "P2: Arrow Left/Right to choose, ENTER to confirm";
         int h1Width = g.getFontMetrics().stringWidth(help1);
         int h2Width = g.getFontMetrics().stringWidth(help2);
         g.drawString(help1, (WIDTH - h1Width) / 2, 410);

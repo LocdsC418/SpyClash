@@ -1,6 +1,5 @@
 package src;
 
-import javax.swing.*;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -55,10 +54,15 @@ public abstract class Fighter implements Movable, Attackable {
     }
 
     public void update() {
+        if (Math.abs(knockbackX) > 0) {
+            x += knockbackX;
+            if (knockbackX > 0) {
+                knockbackX--;
+            } else { knockbackX++; }
+        }
 
         if (stunTimer > 0) {
             stunTimer--;
-            x += knockbackX;
 
             if (!onGround){
                 velocityY += GRAVITY;
@@ -130,8 +134,11 @@ public abstract class Fighter implements Movable, Attackable {
         }
     }
 
-    public void getStunned(int duration, int knockback) {
+    public void getStunned(int duration) {
         stunTimer = duration;
+    }
+
+    public void getKnockBack(int knockback) {
         knockbackX = knockback;
     }
 
@@ -193,6 +200,10 @@ public abstract class Fighter implements Movable, Attackable {
     public int getY() { return y; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
+
+    public boolean isStunned() {
+        return stunTimer > 0;
+    }
 
     public void setFacingDirection(int facingDirection) {
         this.facingDirection = facingDirection;
