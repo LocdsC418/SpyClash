@@ -8,17 +8,17 @@ public abstract class Fighter implements Movable, Attackable {
 
     private int x;
     private int y;
-    private int width = 50;
-    private int height = 100;
+    private int width = 60;
+    private int height = 120;
     private int velocityY = 0;
     private Color color;
 
     private int stunTimer = 0;
     private int knockbackX = 0;
 
-    private final int GROUND = 350;
-    private final int GRAVITY = 1;
-    private final int SCREEN_WIDTH = 800;
+    private final int GROUND = 800;
+    private final int GRAVITY = 2;
+    private final int SCREEN_WIDTH = 1920;
 
     private boolean onGround = true;
     private boolean leftPressed = false;
@@ -31,9 +31,6 @@ public abstract class Fighter implements Movable, Attackable {
 
     private boolean attacking = false;
     private int attackTimer = 0;
-//    private final int ATTACK_DURATION = 15;
-//    private final int ATTACK_RANGE = 60;
-//    private final int ATTACK_DAMAGE = 10;
     private int facingDirection = 1;
 
     public abstract int getSpeed();
@@ -127,9 +124,9 @@ public abstract class Fighter implements Movable, Attackable {
         if (attacking) {
             g.setColor(Color.YELLOW);
             if (facingDirection == 1) {
-                g.fillRect(x + width, y + 20, getAttackRange(), 15);
+                g.fillRect(x + width, y + 20, getAttackRange(), 30);
             } else {
-                g.fillRect(x - getAttackRange(), y + 20, getAttackRange(), 15);
+                g.fillRect(x - getAttackRange(), y + 20, getAttackRange(), 30);
             }
         }
     }
@@ -186,9 +183,9 @@ public abstract class Fighter implements Movable, Attackable {
             return null;
         }
         if (facingDirection == 1) {
-            return new Rectangle(x + width, y + 20, getAttackRange(), 15);
+            return new Rectangle(x + width, y + 20, getAttackRange(), 30);
         } else {
-            return new Rectangle(x - getAttackRange(), y + 20, getAttackRange(), 15);
+            return new Rectangle(x - getAttackRange(), y + 20, getAttackRange(), 30);
         }
     }
 

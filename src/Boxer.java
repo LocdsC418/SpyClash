@@ -12,10 +12,10 @@ public class Boxer extends Fighter {
     public int getSpeed() { return 4; }
 
     @Override
-    public int getJumpForce() { return -12; }
+    public int getJumpForce() { return -25; }
 
     @Override
-    public int getAttackRange() { return 70; }
+    public int getAttackRange() { return 170; }
 
     @Override
     public int getAttackDamage() { return 15; }
@@ -27,5 +27,5 @@ public class Boxer extends Fighter {
     public String getName() { return "Boxer"; }
 
     @Override
-    public boolean canDoubleJump() { return false; }
+    public boolean canDoubleJump() { return true; }
 }

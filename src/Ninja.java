@@ -12,10 +12,10 @@ public class Ninja extends Fighter {
     public int getSpeed() { return 7; }
 
     @Override
-    public int getJumpForce() { return -18; }
+    public int getJumpForce() { return -30; }
 
     @Override
-    public int getAttackRange() { return 40; }
+    public int getAttackRange() { return 100; }
 
     @Override
     public int getAttackDamage() { return 7; }

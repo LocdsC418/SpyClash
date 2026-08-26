@@ -1,14 +1,13 @@
 package src;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 public class HealthBar {
 
     private int x;
     private int y;
-    private int width = 200;
-    private int height = 20;
+    private int width = 400;
+    private int height = 40;
 
     public HealthBar(int x, int y) {
         this.x = x;
@@ -31,6 +30,7 @@ public class HealthBar {
         g.fillRect(x + 1, y + 1, hpWidth - 1, height - 1);
 
         g.setColor(Color.WHITE);
-        g.drawString(name, x, y -5);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString(name, x, y - 10);
     }
 }

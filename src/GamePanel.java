@@ -11,9 +11,9 @@ import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
-    final int WIDTH = 800;
-    final int HEIGHT = 500;
-    final int GROUND = 350;
+    final int WIDTH = 1920;
+    final int HEIGHT = 1080;
+    final int GROUND = 800;
 
     int freezeTimer = 0;
     final int FREEZE_DURATION = 6;
@@ -40,12 +40,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(this);
-
-//        player1 = new Ninja(100, Color.RED);
-//        player2 = new Boxer(600, Color.BLUE);
-//
-//        hpBar1 = new HealthBar(20, 40);
-//        hpBar2 = new HealthBar(580, 40);
 
         timer = new Timer(16, this);
         timer.start();
@@ -119,7 +113,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, GROUND + 100, WIDTH, HEIGHT);
+        g.fillRect(0, GROUND + 120, WIDTH, HEIGHT);
 
         player1.draw(g);
         player2.draw(g);
@@ -129,15 +123,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         if (gameOver) {
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.setFont(new Font("Arial", Font.BOLD, 80));
 
             int textWidth = g.getFontMetrics().stringWidth(winnerText);
-            g.drawString(winnerText, (WIDTH - textWidth) / 2, 250);
+            g.drawString(winnerText, (WIDTH - textWidth) / 2, 480);
 
-            g.setFont(new Font("Arial", Font.PLAIN, 20));
+            g.setFont(new Font("Arial", Font.PLAIN, 40));
             String restart = "Press R to restart";
             int restartWidth = g.getFontMetrics().stringWidth(restart);
-            g.drawString(restart, (WIDTH - restartWidth) / 2, 290);
+            g.drawString(restart, (WIDTH - restartWidth) / 2, 550);
         }
     }
 
@@ -241,12 +235,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     }
 
     private void startGame() {
-        player1 = createFighter(p1Choice, 100, Color.RED);
-        player2 = createFighter(p2Choice, 600, Color.BLUE);
+        player1 = createFighter(p1Choice, 200, Color.RED);
+        player2 = createFighter(p2Choice, 1600, Color.BLUE);
         player2.setFacingDirection(-1);
 
-        hpBar1 = new HealthBar(20, 40);
-        hpBar2 = new HealthBar(580, 40);
+        hpBar1 = new HealthBar(40, 60);
+        hpBar2 = new HealthBar(1480, 60);
         selectingCharacter = false;
         gameOver = false;
         winnerText = "";
@@ -254,10 +248,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private void drawCharacterSelect(Graphics g) {
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 30));
+        g.setFont(new Font("Arial", Font.BOLD, 60));
         String title = "SELECT YOUR FIGHTER";
         int titleWidth = g.getFontMetrics().stringWidth(title);
-        g.drawString(title, (WIDTH - titleWidth) / 2, 60);
+        g.drawString(title, (WIDTH - titleWidth) / 2, 120);
 
         String[] names = {"Ninja", "Boxer"};
         String[] stats = {
@@ -266,50 +260,50 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         };
 
         for (int i = 0; i <2 ; i++) {
-            int boxX = 150 + i * 280;
-            int boxY = 100;
-            int boxW = 200;
-            int boxH = 250;
+            int boxX = 360 + i * 670;
+            int boxY = 200;
+            int boxW = 480;
+            int boxH = 500;
 
             g.setColor(Color.DARK_GRAY);
             g.fillRect(boxX, boxY, boxW, boxH);
 
             Color previewColor = (i == 0) ? Color.GREEN : Color.ORANGE;
             g.setColor(previewColor);
-            g.fillRect(boxX + 75, boxY + 30, 50, 100);
+            g.fillRect(boxX + 165, boxY + 60, 150, 250);
 
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 22));
+            g.setFont(new Font("Arial", Font.BOLD, 44));
             int nameWidth = g.getFontMetrics().stringWidth(names[i]);
-            g.drawString(names[i], boxX + (boxW - nameWidth) / 2, boxY + 160);
+            g.drawString(names[i], boxX + (boxW - nameWidth) / 2, boxY + 370);
 
-            g.setFont(new Font("Arial", Font.PLAIN, 12));
+            g.setFont(new Font("Arial", Font.PLAIN, 24));
             int statWidth = g.getFontMetrics().stringWidth(stats[i]);
-            g.drawString(stats[i], boxX + (boxW - statWidth) / 2, boxY + 185);
+            g.drawString(stats[i], boxX + (boxW - statWidth) / 2, boxY + 410);
 
             if (p1Choice == i) {
                 g.setColor(Color.RED);
-                g.setFont(new Font("Arial", Font.BOLD, 16));
+                g.setFont(new Font("Arial", Font.BOLD, 32));
                 String p1Label = p1Ready ? "P1 READY!" : "> P1! <";
                 int labelW = g.getFontMetrics().stringWidth(p1Label);
-                g.drawString(p1Label, boxX + (boxW - labelW) / 2, boxY + 215);
+                g.drawString(p1Label, boxX + (boxW - labelW) / 2, boxY + 450);
             }
             if (p2Choice == i) {
                 g.setColor(Color.BLUE);
-                g.setFont(new Font("Arial", Font.BOLD, 16));
+                g.setFont(new Font("Arial", Font.BOLD, 32));
                 String p2Label = p2Ready ? "P2 READY!" : "> P2! <";
                 int labelW = g.getFontMetrics().stringWidth(p2Label);
-                g.drawString(p2Label, boxX + (boxW - labelW) / 2, boxY + 240);
+                g.drawString(p2Label, boxX + (boxW - labelW) / 2, boxY + 490);
             }
         }
 
         g.setColor(Color.GRAY);
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        g.setFont(new Font("Arial", Font.PLAIN, 28));
         String help1 = "P1: A/D to choose, F to confirm";
         String help2 = "P2: Arrow Left/Right to choose, ENTER to confirm";
         int h1Width = g.getFontMetrics().stringWidth(help1);
         int h2Width = g.getFontMetrics().stringWidth(help2);
-        g.drawString(help1, (WIDTH - h1Width) / 2, 410);
-        g.drawString(help2, (WIDTH - h2Width) / 2, 435);
+        g.drawString(help1, (WIDTH - h1Width) / 2, 850);
+        g.drawString(help2, (WIDTH - h2Width) / 2, 900);
     }
 }
