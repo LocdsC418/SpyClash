@@ -27,6 +27,9 @@ public abstract class Fighter implements Movable, Attackable {
     private int maxHP;
     private int hp;
 
+    private int speedBoost = 0;
+    private int damageBoost = 0;
+
     private int jumpCount = 0;
 
     private boolean attacking = false;
@@ -80,11 +83,11 @@ public abstract class Fighter implements Movable, Attackable {
 
         if (!attacking || !onGround) {
             if (leftPressed){
-                x -= getSpeed();
+                x -= getSpeed() + speedBoost;
                 facingDirection = -1;
             }
             if (rightPressed){
-                x += getSpeed();
+                x += getSpeed() + speedBoost;
                 facingDirection = 1;
             }
         }
@@ -193,17 +196,31 @@ public abstract class Fighter implements Movable, Attackable {
         return new Rectangle(x, y, width, height);
     }
 
+    public void setFacingDirection(int facingDirection) {
+        this.facingDirection = facingDirection;
+    }
+
+    public void setSpeedBoost(int boost) {
+        this.speedBoost = boost;
+    }
+
+    public void setDamageBoost(int boost) {
+        this.damageBoost = boost;
+    }
+
+    public void heal(int amount) {
+        hp += amount;
+        if (hp > maxHP) hp = maxHP;
+    }
+
     public int getX() { return x; }
     public int getY() { return y; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
-
+    public int getTotalDamage() { return getAttackDamage() + damageBoost;}
+    
     public boolean isStunned() {
         return stunTimer > 0;
-    }
-
-    public void setFacingDirection(int facingDirection) {
-        this.facingDirection = facingDirection;
     }
 
     public int getHP() { return hp; }
