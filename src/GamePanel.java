@@ -2,21 +2,21 @@ package src;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     final int WIDTH = 800;
     final int HEIGHT = 500;
     final int GROUND = 350;
+
+    int freezeTimer = 0;
+    final int FREEZE_DURATION = 6;
 
     Fighter player1;
     Fighter player2;
@@ -62,17 +62,32 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         if (gameOver) {
             return;
         }
+
+        if (freezeTimer > 0) {
+            freezeTimer--;
+            repaint();
+            return;
+        }
+
         player1.update();
         player2.update();
 
         Rectangle attack1 = player1.getAttackHitbox();
         if (attack1 != null && attack1.intersects(player2.getBodyHitbox())) {
             player2.takeDamage(player1.getAttackDamage());
+            freezeTimer = FREEZE_DURATION;
+
+            int  dir = (player1.getX() < player2.getX()) ? 15 : -15;
+            player2.getStunned(10, dir);
         }
 
         Rectangle attack2 = player2.getAttackHitbox();
         if (attack2 != null && attack2.intersects(player1.getBodyHitbox())) {
             player1.takeDamage(player2.getAttackDamage());
+            freezeTimer = FREEZE_DURATION;
+
+            int  dir = (player2.getX() < player1.getX()) ? 15 : -15;
+            player1.getStunned(10, dir);
         }
 
         if (!player1.isAlive()) {
@@ -90,6 +105,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        double scaleX = (double) getWidth() / WIDTH;
+        double scaleY = (double) getHeight() / HEIGHT;
+        g2d.scale(scaleX, scaleY);
 
         if (selectingCharacter) {
             drawCharacterSelect(g);

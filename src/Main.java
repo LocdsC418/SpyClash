@@ -10,7 +10,7 @@ public class Main{
 
         window.add(panel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
+        window.setResizable(true);
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);

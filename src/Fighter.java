@@ -1,5 +1,6 @@
 package src;
 
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -12,6 +13,9 @@ public abstract class Fighter implements Movable, Attackable {
     private int height = 100;
     private int velocityY = 0;
     private Color color;
+
+    private int stunTimer = 0;
+    private int knockbackX = 0;
 
     private final int GROUND = 350;
     private final int GRAVITY = 1;
@@ -51,6 +55,27 @@ public abstract class Fighter implements Movable, Attackable {
     }
 
     public void update() {
+
+        if (stunTimer > 0) {
+            stunTimer--;
+            x += knockbackX;
+
+            if (!onGround){
+                velocityY += GRAVITY;
+                y += velocityY;
+
+                if (y >= GROUND){
+                    y = GROUND;
+                    velocityY = 0;
+                    onGround = true;
+                    jumpCount = 0;
+                }
+            }
+
+            if (x < 0) x = 0;
+            if (x > SCREEN_WIDTH - width) x = SCREEN_WIDTH - width;
+            return;
+        }
 
         if (!attacking || !onGround) {
             if (leftPressed){
@@ -103,6 +128,11 @@ public abstract class Fighter implements Movable, Attackable {
                 g.fillRect(x - getAttackRange(), y + 20, getAttackRange(), 15);
             }
         }
+    }
+
+    public void getStunned(int duration, int knockback) {
+        stunTimer = duration;
+        knockbackX = knockback;
     }
 
     @Override
