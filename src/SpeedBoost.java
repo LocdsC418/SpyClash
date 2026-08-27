@@ -4,8 +4,6 @@ import java.awt.Color;
 
 public class SpeedBoost extends Item {
 
-    private int originalSpeed = 0;
-
     public SpeedBoost(int x, int y) {
         super(x, y);
     }
@@ -21,12 +19,6 @@ public class SpeedBoost extends Item {
 
     @Override
     public void applyEffect(Fighter f) {
-        originalSpeed = f.getSpeed();
-        f.setSpeedBoost(5);
-    }
-
-    @Override
-    public void removeEffect(Fighter f) {
-        f.setSpeedBoost(0);
+        f.addSpeedBoost(getEffectDuration(), 5);
     }
 }

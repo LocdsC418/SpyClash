@@ -28,7 +28,9 @@ public abstract class Fighter implements Movable, Attackable {
     private int hp;
 
     private int speedBoost = 0;
+    private int speedBoostTimer = 0;
     private int damageBoost = 0;
+    private int damageBoostTimer = 0;
 
     private int jumpCount = 0;
 
@@ -54,6 +56,22 @@ public abstract class Fighter implements Movable, Attackable {
     }
 
     public void update() {
+
+        if (speedBoostTimer > 0) {
+            speedBoostTimer--;
+            if (speedBoostTimer <= 0) {
+                speedBoostTimer = 0;
+                speedBoost = 0;
+            }
+        }
+        if (damageBoostTimer > 0) {
+            damageBoostTimer--;
+            if (damageBoostTimer <= 0) {
+                damageBoostTimer = 0;
+                damageBoost = 0;
+            }
+        }
+
         if (Math.abs(knockbackX) > 0) {
             x += knockbackX;
             if (knockbackX > 0) {
@@ -179,6 +197,16 @@ public abstract class Fighter implements Movable, Attackable {
     @Override
     public void setRightPressed(boolean pressed) {
         this.rightPressed = pressed;
+    }
+
+    public void addSpeedBoost(int duration, int amount) {
+        speedBoostTimer += duration;
+        speedBoost = amount;
+    }
+
+    public void addDamageBoost(int duration, int amount) {
+        damageBoostTimer += duration;
+        damageBoost = amount;
     }
 
     public Rectangle getAttackHitbox() {

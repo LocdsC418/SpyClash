@@ -19,11 +19,6 @@ public class DamageBoost extends Item {
 
     @Override
     public void applyEffect(Fighter f) {
-        f.setDamageBoost(10);
-    }
-
-    @Override
-    public void removeEffect(Fighter f) {
-        f.setDamageBoost(0);
+        f.addDamageBoost(getEffectDuration(), 10);
     }
 }

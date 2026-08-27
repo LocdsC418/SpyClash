@@ -21,8 +21,4 @@ public class HealItem extends Item {
     public void applyEffect(Fighter f) {
         f.heal(40);
     }
-
-    @Override
-    public void removeEffect(Fighter f) {
-    }
 }

@@ -44,7 +44,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     ArrayList<Item> items = new ArrayList<>();
     Random random = new Random();
     int spawnTimer = 0;
-    final int SPAWN_INTERVAL = 900;
+    final int SPAWN_INTERVAL = 300;
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -93,10 +93,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                     item.collect(player2);
                 }
             }
-            item.update();
         }
-
-        items.removeIf(Item::isExpired);
+        items.removeIf(Item::isCollected);
 
         Rectangle attack1 = player1.getAttackHitbox();
         if (attack1 != null && attack1.intersects(player2.getBodyHitbox())) {
