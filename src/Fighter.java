@@ -100,7 +100,6 @@ public abstract class Fighter implements Movable, Attackable {
             attackTimer = 0;
         }
     }
-
     @Override
     public void jump() {
         int maxJump = canDoubleJump() ? 2 : 1;
@@ -110,7 +109,6 @@ public abstract class Fighter implements Movable, Attackable {
             jumpCount++;
         }
     }
-
     @Override
     public void takeDamage(int damage) {
         hp -= damage;
@@ -118,15 +116,12 @@ public abstract class Fighter implements Movable, Attackable {
             hp = 0;
         }
     }
-
     @Override
     public boolean isAlive() { return hp > 0; }
-
     @Override
     public void setLeftPressed(boolean pressed) {
         this.leftPressed = pressed;
     }
-
     @Override
     public void setRightPressed(boolean pressed) {
         this.rightPressed = pressed;
@@ -136,7 +131,6 @@ public abstract class Fighter implements Movable, Attackable {
         speedBoostTimer += duration;
         speedBoost = amount;
     }
-
     public void addDamageBoost(int duration, int amount) {
         damageBoostTimer += duration;
         damageBoost = amount;
@@ -152,7 +146,6 @@ public abstract class Fighter implements Movable, Attackable {
             return new Rectangle(x - getAttackRange(), y + 20, getAttackRange(), 30);
         }
     }
-
     public Rectangle getBodyHitbox() {
         return new Rectangle(x, y, width, height);
     }
@@ -160,18 +153,23 @@ public abstract class Fighter implements Movable, Attackable {
     public void setFacingDirection(int facingDirection) {
         this.facingDirection = facingDirection;
     }
-
     public void setSpeedBoost(int boost) {
         this.speedBoost = boost;
     }
-
     public void setDamageBoost(int boost) {
         this.damageBoost = boost;
+    }
+    public void setX(int x) {
+        this.x = x;
     }
 
     public void heal(int amount) {
         hp += amount;
         if (hp > maxHP) hp = maxHP;
+    }
+    public void pushX(int amount) {
+        x += amount;
+        checkPosition();
     }
 
     public int getX() { return x; }

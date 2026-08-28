@@ -77,6 +77,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         player1.update();
         player2.update();
 
+        handlePlayerCollision();
         handleItemSpawn();
         handleItemFallAndCollect();
         handleAttackCollision();
@@ -102,8 +103,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, GROUND, WIDTH, HEIGHT);
 
-        player1.draw(g);
-        player2.draw(g);
+        if (player1.getX() <= player2.getX()) {
+            player1.draw(g);
+            player2.draw(g);
+        } else {
+            player2.draw(g);
+            player1.draw(g);
+        }
 
         for (Item item : items) {
             item.draw(g);
@@ -325,7 +331,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             }
         }
     }
-
     private void handleItemFallAndCollect() {
         for (Item item : items) {
 
@@ -346,7 +351,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
         items.removeIf(Item::isCollected);
     }
-
     private void handleAttackCollision(){
         Rectangle attack1 = player1.getAttackHitbox();
         if (attack1 != null && attack1.intersects(player2.getBodyHitbox())) {
@@ -368,7 +372,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             player1.getStunned(10);
         }
     }
-
     private void handleWinCondition() {
         if (!player1.isAlive()) {
             gameOver = true;
@@ -378,5 +381,25 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             gameOver = true;
             winnerText = "Player 1 wins!";
         }
+    }
+    private void handlePlayerCollision() {
+        Rectangle body1 = player1.getBodyHitbox();
+        Rectangle body2 = player2.getBodyHitbox();
+
+        if (body1.intersects(body2)) {
+            int overlap;
+
+            if (player1.getX() < player2.getX()) {
+                overlap = player1.getX() + player1.getWidth() - player2.getX();
+                player1.pushX(-overlap / 5);
+                player2.pushX(overlap / 5);
+            } else {
+                overlap = player2.getX() + player2.getWidth() - player1.getX();
+                player2.pushX(-overlap / 5);
+                player1.pushX(overlap / 5);
+            }
+        }
+
+
     }
 }
