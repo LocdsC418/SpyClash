@@ -34,6 +34,8 @@ public abstract class Fighter implements Movable, Attackable {
 
     private int jumpCount = 0;
 
+    private Weapon weapon = null;
+
     private boolean attacking = false;
     private int attackTimer = 0;
     private int facingDirection = 1;
@@ -76,11 +78,11 @@ public abstract class Fighter implements Movable, Attackable {
         g.fillRect(x, y, width, height);
 
         if (attacking) {
-            g.setColor(Color.YELLOW);
+            g.setColor(getAttackColor());
             if (facingDirection == 1) {
-                g.fillRect(x + width, y + 20, getAttackRange(), 30);
+                g.fillRect(x + width, y + 20, getFinalAttackRange(), 30);
             } else {
-                g.fillRect(x - getAttackRange(), y + 20, getAttackRange(), 30);
+                g.fillRect(x - getFinalAttackRange(), y + 20, getFinalAttackRange(), 30);
             }
         }
     }
@@ -98,6 +100,12 @@ public abstract class Fighter implements Movable, Attackable {
         if (!attacking) {
             attacking = true;
             attackTimer = 0;
+            if (hasWeapon()) {
+                weapon.used();
+                if (weapon.isBroken()) {
+                    weapon = null;
+                }
+            }
         }
     }
     @Override
@@ -137,13 +145,14 @@ public abstract class Fighter implements Movable, Attackable {
     }
 
     public Rectangle getAttackHitbox() {
+
         if (!attacking || attackTimer != 1) {
             return null;
         }
         if (facingDirection == 1) {
-            return new Rectangle(x + width, y + 20, getAttackRange(), 30);
+            return new Rectangle(x + width, y + 20, getFinalAttackRange(), 30);
         } else {
-            return new Rectangle(x - getAttackRange(), y + 20, getAttackRange(), 30);
+            return new Rectangle(x - getFinalAttackRange(), y + 20, getFinalAttackRange(), 30);
         }
     }
     public Rectangle getBodyHitbox() {
@@ -163,6 +172,18 @@ public abstract class Fighter implements Movable, Attackable {
         this.x = x;
     }
 
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+    public boolean hasWeapon() { return weapon != null && !weapon.isBroken(); }
+    public int getFinalAttackDuration() { return hasWeapon() ? weapon.getAttackDuration() : getAttackDuration();}
+    public int getFinalAttackRange() { return hasWeapon() ? weapon.getRange() : getAttackRange(); }
+    public int getTotalDamage() {
+        return hasWeapon() ? weapon.getDamage() + damageBoost : getAttackDamage() + damageBoost;
+    }
+    public Color getAttackColor() { return hasWeapon() ? weapon.getColor() : Color.YELLOW;}
+
     public void heal(int amount) {
         hp += amount;
         if (hp > maxHP) hp = maxHP;
@@ -176,7 +197,7 @@ public abstract class Fighter implements Movable, Attackable {
     public int getY() { return y; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
-    public int getTotalDamage() { return getAttackDamage() + damageBoost;}
+
     
     public boolean isStunned() {
         return stunTimer > 0;
@@ -225,7 +246,7 @@ public abstract class Fighter implements Movable, Attackable {
     private void updateAttack() {
         if (attacking) {
             attackTimer++;
-            if (attackTimer >= getAttackDuration()) {
+            if (attackTimer >= getFinalAttackDuration()) {
                 attacking = false;
                 attackTimer = 0;
             }

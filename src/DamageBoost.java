@@ -2,7 +2,7 @@ package src;
 
 import java.awt.Color;
 
-public class DamageBoost extends Item {
+public class DamageBoost extends Buff {
 
     public DamageBoost(int x, int y) {
         super(x, y);
@@ -18,7 +18,8 @@ public class DamageBoost extends Item {
     public int getEffectDuration() { return 300; }
 
     @Override
-    public void applyEffect(Fighter f) {
-        f.addDamageBoost(getEffectDuration(), 10);
-    }
+    public int getAmount() { return 10; }
+
+    @Override
+    public void applyTo(Fighter f) { f.addDamageBoost(getEffectDuration(), getAmount()); }
 }

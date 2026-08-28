@@ -2,7 +2,7 @@ package src;
 
 import java.awt.Color;
 
-public class SpeedBoost extends Item {
+public class SpeedBoost extends Buff {
 
     public SpeedBoost(int x, int y) {
         super(x, y);
@@ -18,7 +18,10 @@ public class SpeedBoost extends Item {
     public int getEffectDuration() { return 300; }
 
     @Override
-    public void applyEffect(Fighter f) {
-        f.addSpeedBoost(getEffectDuration(), 5);
+    public int getAmount() { return 5; }
+
+    @Override
+    public void applyTo(Fighter f) {
+        f.addSpeedBoost(getEffectDuration(), getAmount());
     }
 }

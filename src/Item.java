@@ -20,7 +20,8 @@ public abstract class Item {
     public abstract String getName();
     public abstract Color getColor();
     public abstract int getEffectDuration();
-    public abstract void applyEffect(Fighter f);
+    public abstract int getAmount();
+    public abstract void applyTo(Fighter f);
 
     public void removeEffect(Fighter f){}
 
@@ -44,7 +45,7 @@ public abstract class Item {
     public void collect(Fighter f) {
         if (collected) {return;}
         collected = true;
-        applyEffect(f);
+        applyTo(f);
     }
 
     public void plusY() { this.y++; }

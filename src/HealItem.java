@@ -2,7 +2,7 @@ package src;
 
 import java.awt.Color;
 
-public class HealItem extends Item {
+public class HealItem extends Buff {
 
     public HealItem(int x, int y) {
         super(x, y);
@@ -18,7 +18,10 @@ public class HealItem extends Item {
     public int getEffectDuration() { return 1; }
 
     @Override
-    public void applyEffect(Fighter f) {
-        f.heal(40);
+    public int getAmount() { return 40; }
+
+    @Override
+    public void applyTo(Fighter f) {
+        f.heal(getAmount());
     }
 }

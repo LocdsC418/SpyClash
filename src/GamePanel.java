@@ -333,12 +333,17 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         int x = 300 +  random.nextInt(1320);
         int y = GROUND - 600;
 
-        int type = random.nextInt(3);
+        int type = random.nextInt(5);
+
         if (type == 0) {
             items.add(new SpeedBoost(x, y));
         } else if (type == 1) {
             items.add(new DamageBoost(x, y));
-        } else {
+        } else if (type == 2) {
+            items.add(new GunItem(x, y));
+        } else if (type == 3) {
+            items.add(new SwordItem(x, y));
+        } else if (type == 4){
             items.add(new HealItem(x, y));
         }
     }
