@@ -100,35 +100,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             return;
         }
 
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, GROUND, WIDTH, HEIGHT);
-
-        if (player1.getX() <= player2.getX()) {
-            player1.draw(g);
-            player2.draw(g);
-        } else {
-            player2.draw(g);
-            player1.draw(g);
-        }
-
-        for (Item item : items) {
-            item.draw(g);
-        }
-
-        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[WASD + F]");
-        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[Arrow + /]");
+        drawArena(g);
+        drawFighter(g);
+        drawItem(g);
+        drawHUD(g);
 
         if (gameOver) {
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 80));
-
-            int textWidth = g.getFontMetrics().stringWidth(winnerText);
-            g.drawString(winnerText, (WIDTH - textWidth) / 2, 480);
-
-            g.setFont(new Font("Arial", Font.PLAIN, 40));
-            String restart = "Press R to restart";
-            int restartWidth = g.getFontMetrics().stringWidth(restart);
-            g.drawString(restart, (WIDTH - restartWidth) / 2, 550);
+            drawGameOver(g);
         }
     }
 
@@ -307,7 +285,50 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         g.drawString(help1, (WIDTH - h1Width) / 2, 850);
         g.drawString(help2, (WIDTH - h2Width) / 2, 900);
     }
+    private void drawArena(Graphics g) {
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, GROUND, WIDTH, HEIGHT);
+    }
+    private void drawFighter(Graphics g) {
+        if (player1.getX() <= player2.getX()) {
+            player1.draw(g);
+            player2.draw(g);
+        } else {
+            player2.draw(g);
+            player1.draw(g);
+        }
+    }
+    private void drawItem(Graphics g) {
+        for (Item item : items) {
+            item.draw(g);
+        }
+    }
+    private void drawHUD(Graphics g) {
+        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[WASD + F]");
+        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[Arrow + /]");
+    }
+    private void drawGameOver(Graphics g) {
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 80));
 
+        int textWidth = g.getFontMetrics().stringWidth(winnerText);
+        g.drawString(winnerText, (WIDTH - textWidth) / 2, 480);
+
+        g.setFont(new Font("Arial", Font.PLAIN, 40));
+        String restart = "Press R to restart";
+        int restartWidth = g.getFontMetrics().stringWidth(restart);
+        g.drawString(restart, (WIDTH - restartWidth) / 2, 550);
+    }
+
+    private void handleItemSpawn() {
+        spawnTimer++;
+        if (spawnTimer >= SPAWN_INTERVAL) {
+            spawnTimer = 0;
+            if (items.size() < 3) {
+                spawnRandomItem();
+            }
+        }
+    }
     private void spawnRandomItem() {
         int x = 300 +  random.nextInt(1320);
         int y = GROUND - 600;
@@ -319,16 +340,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             items.add(new DamageBoost(x, y));
         } else {
             items.add(new HealItem(x, y));
-        }
-    }
-
-    private void handleItemSpawn() {
-        spawnTimer++;
-        if (spawnTimer >= SPAWN_INTERVAL) {
-            spawnTimer = 0;
-            if (items.size() < 3) {
-                spawnRandomItem();
-            }
         }
     }
     private void handleItemFallAndCollect() {
