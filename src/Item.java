@@ -47,7 +47,13 @@ public abstract class Item {
         applyEffect(f);
     }
 
+    public void plusY() { this.y++; }
 
     public boolean isCollected() { return collected; }
+
+    public int getY() { return this.y; }
+    public int getSize() { return this.size; }
+    public void setY(int y) { this.y = y; }
+
 
 }

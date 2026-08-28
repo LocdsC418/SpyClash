@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     final int WIDTH = 1920;
     final int HEIGHT = 1080;
-    final int GROUND = 800;
+    final int GROUND = 920;
 
     int freezeTimer = 0;
     final int FREEZE_DURATION = 6;
@@ -77,53 +77,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         player1.update();
         player2.update();
 
-        spawnTimer++;
-        if (spawnTimer >= SPAWN_INTERVAL) {
-            spawnTimer = 0;
-            if (items.size() < 3) {
-                spawnRandomItem();
-            }
-        }
-
-        for (Item item : items) {
-            if (!item.isCollected()) {
-                if (player1.getBodyHitbox().intersects(item.getHitbox())) {
-                    item.collect(player1);
-                } else if (player2.getBodyHitbox().intersects(item.getHitbox())) {
-                    item.collect(player2);
-                }
-            }
-        }
-        items.removeIf(Item::isCollected);
-
-        Rectangle attack1 = player1.getAttackHitbox();
-        if (attack1 != null && attack1.intersects(player2.getBodyHitbox())) {
-            player2.takeDamage(player1.getTotalDamage());
-            freezeTimer = FREEZE_DURATION;
-
-            int  dir = (player1.getX() < player2.getX()) ? 20 : -20;
-            player2.getKnockBack(dir);
-            player2.getStunned(10);
-        }
-
-        Rectangle attack2 = player2.getAttackHitbox();
-        if (attack2 != null && attack2.intersects(player1.getBodyHitbox())) {
-            player1.takeDamage(player2.getTotalDamage());
-            freezeTimer = FREEZE_DURATION;
-
-            int  dir = (player2.getX() < player1.getX()) ? 20 : -20;
-            player1.getKnockBack(dir);
-            player1.getStunned(10);
-        }
-
-        if (!player1.isAlive()) {
-            gameOver = true;
-            winnerText = "Player 2 wins!";
-        }
-        if (!player2.isAlive()) {
-            gameOver = true;
-            winnerText = "Player 1 wins!";
-        }
+        handleItemSpawn();
+        handleItemFallAndCollect();
+        handleAttackCollision();
+        handleWinCondition();
 
         repaint();
     }
@@ -143,7 +100,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, GROUND + 120, WIDTH, HEIGHT);
+        g.fillRect(0, GROUND, WIDTH, HEIGHT);
 
         player1.draw(g);
         player2.draw(g);
@@ -347,7 +304,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private void spawnRandomItem() {
         int x = 300 +  random.nextInt(1320);
-        int y = GROUND - 40;
+        int y = GROUND - 600;
 
         int type = random.nextInt(3);
         if (type == 0) {
@@ -356,6 +313,70 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             items.add(new DamageBoost(x, y));
         } else {
             items.add(new HealItem(x, y));
+        }
+    }
+
+    private void handleItemSpawn() {
+        spawnTimer++;
+        if (spawnTimer >= SPAWN_INTERVAL) {
+            spawnTimer = 0;
+            if (items.size() < 3) {
+                spawnRandomItem();
+            }
+        }
+    }
+
+    private void handleItemFallAndCollect() {
+        for (Item item : items) {
+
+            if (item.getY() < GROUND - item.getSize()) {
+                item.plusY();
+                if (item.getY() >= GROUND - item.getSize()) {
+                    item.setY(GROUND - item.getSize());
+                }
+            }
+
+            if (!item.isCollected()) {
+                if (player1.getBodyHitbox().intersects(item.getHitbox())) {
+                    item.collect(player1);
+                } else if (player2.getBodyHitbox().intersects(item.getHitbox())) {
+                    item.collect(player2);
+                }
+            }
+        }
+        items.removeIf(Item::isCollected);
+    }
+
+    private void handleAttackCollision(){
+        Rectangle attack1 = player1.getAttackHitbox();
+        if (attack1 != null && attack1.intersects(player2.getBodyHitbox())) {
+            player2.takeDamage(player1.getTotalDamage());
+            freezeTimer = FREEZE_DURATION;
+
+            int  dir = (player1.getX() < player2.getX()) ? 20 : -20;
+            player2.getKnockBack(dir);
+            player2.getStunned(10);
+        }
+
+        Rectangle attack2 = player2.getAttackHitbox();
+        if (attack2 != null && attack2.intersects(player1.getBodyHitbox())) {
+            player1.takeDamage(player2.getTotalDamage());
+            freezeTimer = FREEZE_DURATION;
+
+            int  dir = (player2.getX() < player1.getX()) ? 20 : -20;
+            player1.getKnockBack(dir);
+            player1.getStunned(10);
+        }
+    }
+
+    private void handleWinCondition() {
+        if (!player1.isAlive()) {
+            gameOver = true;
+            winnerText = "Player 2 wins!";
+        }
+        if (!player2.isAlive()) {
+            gameOver = true;
+            winnerText = "Player 1 wins!";
         }
     }
 }

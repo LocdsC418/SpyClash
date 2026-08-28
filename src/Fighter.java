@@ -16,7 +16,7 @@ public abstract class Fighter implements Movable, Attackable {
     private int stunTimer = 0;
     private int knockbackX = 0;
 
-    private final int GROUND = 800;
+    private final int GROUND = 920;
     private final int GRAVITY = 2;
     private final int SCREEN_WIDTH = 1920;
 
@@ -49,7 +49,7 @@ public abstract class Fighter implements Movable, Attackable {
 
     public Fighter(int startX, Color color, int maxHP) {
         this.x = startX;
-        this.y = GROUND;
+        this.y = GROUND - height;
         this.color = color;
         this.maxHP = maxHP;
         this.hp = maxHP;
@@ -57,85 +57,18 @@ public abstract class Fighter implements Movable, Attackable {
 
     public void update() {
 
-        if (speedBoostTimer > 0) {
-            speedBoostTimer--;
-            if (speedBoostTimer <= 0) {
-                speedBoostTimer = 0;
-                speedBoost = 0;
-            }
-        }
-        if (damageBoostTimer > 0) {
-            damageBoostTimer--;
-            if (damageBoostTimer <= 0) {
-                damageBoostTimer = 0;
-                damageBoost = 0;
-            }
-        }
-
-        if (Math.abs(knockbackX) > 0) {
-            x += knockbackX;
-            if (knockbackX > 0) {
-                knockbackX--;
-            } else { knockbackX++; }
-        }
+        updateBuff();
+        updateKnockback();
 
         if (stunTimer > 0) {
-            stunTimer--;
-
-            if (!onGround){
-                velocityY += GRAVITY;
-                y += velocityY;
-
-                if (y >= GROUND){
-                    y = GROUND;
-                    velocityY = 0;
-                    onGround = true;
-                    jumpCount = 0;
-                }
-            }
-
-            if (x < 0) x = 0;
-            if (x > SCREEN_WIDTH - width) x = SCREEN_WIDTH - width;
-            return;
+            updateStun();
+        } else {
+            updateMovement();
+            updateAttack();
         }
 
-        if (!attacking || !onGround) {
-            if (leftPressed){
-                x -= getSpeed() + speedBoost;
-                facingDirection = -1;
-            }
-            if (rightPressed){
-                x += getSpeed() + speedBoost;
-                facingDirection = 1;
-            }
-        }
-
-        if (x<0){
-            x = 0;
-        }
-        if (x > SCREEN_WIDTH - width) {
-            x = SCREEN_WIDTH - width;
-        }
-
-        if (!onGround){
-            velocityY += GRAVITY;
-            y += velocityY;
-
-            if (y >= GROUND){
-                y = GROUND;
-                velocityY = 0;
-                onGround = true;
-                jumpCount = 0;
-            }
-        }
-
-        if (attacking) {
-            attackTimer++;
-            if (attackTimer >= getAttackDuration()) {
-                attacking = false;
-                attackTimer = 0;
-            }
-        }
+        updateGravity();
+        checkPosition();
     }
 
     public void draw(Graphics g) {
@@ -253,5 +186,69 @@ public abstract class Fighter implements Movable, Attackable {
 
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
+
+    private void updateBuff() {
+        if (speedBoostTimer > 0) {
+            speedBoostTimer--;
+            if (speedBoostTimer <= 0) {
+                speedBoostTimer = 0;
+                speedBoost = 0;
+            }
+        }
+        if (damageBoostTimer > 0) {
+            damageBoostTimer--;
+            if (damageBoostTimer <= 0) {
+                damageBoostTimer = 0;
+                damageBoost = 0;
+            }
+        }
+    }
+    private void updateKnockback() {
+        if (Math.abs(knockbackX) > 0) {
+            x += knockbackX;
+            if (knockbackX > 0) {
+                knockbackX--;
+            } else { knockbackX++; }
+        }
+    }
+    private void updateStun() { stunTimer--; }
+    private void updateMovement() {
+        if (!attacking || !onGround) {
+            if (leftPressed){
+                x -= getSpeed() + speedBoost;
+                facingDirection = -1;
+            }
+            if (rightPressed){
+                x += getSpeed() + speedBoost;
+                facingDirection = 1;
+            }
+        }
+    }
+    private void updateAttack() {
+        if (attacking) {
+            attackTimer++;
+            if (attackTimer >= getAttackDuration()) {
+                attacking = false;
+                attackTimer = 0;
+            }
+        }
+    }
+    private void checkPosition() {
+        if (x < 0) x = 0;
+        if (x > SCREEN_WIDTH - width) x = SCREEN_WIDTH - width;
+    }
+    private void updateGravity() {
+        if (!onGround){
+            velocityY += GRAVITY;
+            y += velocityY;
+
+            if (y + height >= GROUND){
+                y = GROUND - height;
+                velocityY = 0;
+                onGround = true;
+                jumpCount = 0;
+            }
+        }
+    }
 
 }
