@@ -15,7 +15,16 @@ public class Gun extends Weapon {
     @Override
     public int getRange() { return 220; }
     @Override
-    public int getAttackDuration() { return 10; }
+    public int getAttackDuration() { return 30; }
     @Override
     public Color getColor() { return Color.GRAY; }
+
+    @Override
+    public Bullet createBullet(Fighter owner) {
+        return new Bullet(owner);
+    }
+    @Override
+    public boolean isMelee() {
+        return false;
+    }
 }

@@ -41,6 +41,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     Timer timer;
 
+    ArrayList<Bullet> bullets = new ArrayList<>();
+
     ArrayList<Item> items = new ArrayList<>();
     Random random = new Random();
     int spawnTimer = 0;
@@ -80,6 +82,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         handlePlayerCollision();
         handleItemSpawn();
         handleItemFallAndCollect();
+        handleBullets();
         handleAttackCollision();
         handleWinCondition();
 
@@ -102,6 +105,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         drawArena(g);
         drawFighter(g);
+        drawBullet(g);
         drawItem(g);
         drawHUD(g);
 
@@ -212,6 +216,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private void startGame() {
 
         items.clear();
+        bullets.clear();
         spawnTimer = 0;
 
         player1 = createFighter(p1Choice, 200, Color.RED);
@@ -319,6 +324,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         int restartWidth = g.getFontMetrics().stringWidth(restart);
         g.drawString(restart, (WIDTH - restartWidth) / 2, 550);
     }
+    private void drawBullet(Graphics g) {
+        for (Bullet bullet : bullets) {
+            bullet.draw(g);
+        }
+    }
+
 
     private void handleItemSpawn() {
         spawnTimer++;
@@ -370,22 +381,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private void handleAttackCollision(){
         Rectangle attack1 = player1.getAttackHitbox();
         if (attack1 != null && attack1.intersects(player2.getBodyHitbox())) {
-            player2.takeDamage(player1.getTotalDamage());
-            freezeTimer = FREEZE_DURATION;
-
-            int  dir = (player1.getX() < player2.getX()) ? 20 : -20;
-            player2.getKnockBack(dir);
-            player2.getStunned(10);
+            int  dir = (player1.getX() < player2.getX()) ? 1 : -1;
+            applyHit(player2, player1.getTotalDamage(), dir);
         }
 
         Rectangle attack2 = player2.getAttackHitbox();
         if (attack2 != null && attack2.intersects(player1.getBodyHitbox())) {
-            player1.takeDamage(player2.getTotalDamage());
-            freezeTimer = FREEZE_DURATION;
-
-            int  dir = (player2.getX() < player1.getX()) ? 20 : -20;
-            player1.getKnockBack(dir);
-            player1.getStunned(10);
+            int  dir = (player2.getX() < player1.getX()) ? 1 : -1;
+            applyHit(player1, player2.getTotalDamage(), dir);
         }
     }
     private void handleWinCondition() {
@@ -417,5 +420,39 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
 
+    }
+    private void handleBullets() {
+        Bullet bullet1 = player1.takePendingBullet();
+        if (bullet1 != null) {
+            bullets.add(bullet1);
+        }
+
+        Bullet bullet2 = player2.takePendingBullet();
+        if (bullet2 != null) {
+            bullets.add(bullet2);
+        }
+
+        for (Bullet bullet : bullets) {
+            bullet.update();
+
+            Fighter target = (bullet.getOwner() == player1) ? player2 : player1;
+
+            if (bullet.isActive() && (bullet.getHitbox().intersects(target.getBodyHitbox()))) {
+                applyHit(target, bullet.getDamage(), bullet.getDirection());
+                bullet.deactivate();
+            }
+
+        }
+        bullets.removeIf(b -> !b.isActive());
+
+    }
+
+    private void applyHit(Fighter target, int damage, int direction) {
+        target.takeDamage(damage);
+
+        freezeTimer = FREEZE_DURATION;
+
+        target.getKnockBack(20 * direction);
+        target.getStunned(10);
     }
 }

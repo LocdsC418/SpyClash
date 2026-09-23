@@ -35,6 +35,7 @@ public abstract class Fighter implements Movable, Attackable {
     private int jumpCount = 0;
 
     private Weapon weapon = null;
+    private Bullet pendingBullet = null;
 
     private boolean attacking = false;
     private int attackTimer = 0;
@@ -77,6 +78,7 @@ public abstract class Fighter implements Movable, Attackable {
         g.setColor(color);
         g.fillRect(x, y, width, height);
 
+        if (isLongRange()) return;
         if (attacking) {
             g.setColor(getAttackColor());
             if (facingDirection == 1) {
@@ -100,11 +102,9 @@ public abstract class Fighter implements Movable, Attackable {
         if (!attacking) {
             attacking = true;
             attackTimer = 0;
+
             if (hasWeapon()) {
-                weapon.used();
-                if (weapon.isBroken()) {
-                    weapon = null;
-                }
+                this.pendingBullet = weapon.createBullet(this);
             }
         }
     }
@@ -146,6 +146,8 @@ public abstract class Fighter implements Movable, Attackable {
 
     public Rectangle getAttackHitbox() {
 
+        if (isLongRange()) return null;
+
         if (!attacking || attackTimer != 1) {
             return null;
         }
@@ -182,6 +184,16 @@ public abstract class Fighter implements Movable, Attackable {
     public int getTotalDamage() {
         return hasWeapon() ? weapon.getDamage() + damageBoost : getAttackDamage() + damageBoost;
     }
+    public int getFacingDirection() {
+        return facingDirection;
+    }
+
+    public Bullet takePendingBullet() {
+        Bullet bullet = this.pendingBullet;
+        this.pendingBullet = null;
+        return bullet;
+    }
+
     public Color getAttackColor() { return hasWeapon() ? weapon.getColor() : Color.YELLOW;}
 
     public void heal(int amount) {
@@ -191,6 +203,10 @@ public abstract class Fighter implements Movable, Attackable {
     public void pushX(int amount) {
         x += amount;
         checkPosition();
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
     }
 
     public int getX() { return x; }
@@ -205,6 +221,10 @@ public abstract class Fighter implements Movable, Attackable {
 
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
+
+    private boolean isLongRange() {
+        return hasWeapon() && !weapon.isMelee();
+    }
 
     private void updateBuff() {
         if (speedBoostTimer > 0) {
@@ -249,6 +269,12 @@ public abstract class Fighter implements Movable, Attackable {
             if (attackTimer >= getFinalAttackDuration()) {
                 attacking = false;
                 attackTimer = 0;
+                if (hasWeapon()) {
+                    weapon.used();
+                    if (weapon.isBroken()) {
+                        weapon = null;
+                    }
+                }
             }
         }
     }
