@@ -1,25 +1,18 @@
 package src;
 
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Graphics2D;
-import java.awt.Graphics;
-import java.awt.Dimension;
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
-    final int WIDTH = 1920;
-    final int HEIGHT = 1080;
-    final int GROUND = 920;
+    Image bgStage;
 
     int freezeTimer = 0;
     final int FREEZE_DURATION = 6;
@@ -49,10 +42,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     final int SPAWN_INTERVAL = 300;
 
     public GamePanel(){
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.setPreferredSize(new Dimension(GameConfig.WIDTH, GameConfig.HEIGHT));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(this);
+
+        bgStage = loadImage("/res/background/stage.gif");
 
         timer = new Timer(16, this);
         timer.start();
@@ -65,6 +60,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             repaint();
             return;
         }
+
 
         if (gameOver) {
             return;
@@ -93,9 +89,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     public void paintComponent(Graphics g){
         super.paintComponent(g);
 
+
+
         Graphics2D g2d = (Graphics2D) g;
-        double scaleX = (double) getWidth() / WIDTH;
-        double scaleY = (double) getHeight() / HEIGHT;
+        double scaleX = (double) getWidth() / GameConfig.WIDTH;
+        double scaleY = (double) getHeight() / GameConfig.HEIGHT;
         g2d.scale(scaleX, scaleY);
 
         if (selectingCharacter) {
@@ -104,6 +102,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         drawArena(g);
+
         drawFighter(g);
         drawBullet(g);
         drawItem(g);
@@ -213,6 +212,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    private Image loadImage(String path) {
+        URL url = getClass().getResource(path);
+        if (url == null) {
+            System.out.println("Image not found: " + path);
+            return null;
+        }
+        return new ImageIcon(url).getImage();
+    }
+
     private void startGame() {
 
         items.clear();
@@ -228,6 +236,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         selectingCharacter = false;
         gameOver = false;
         winnerText = "";
+
     }
 
     private void drawCharacterSelect(Graphics g) {
@@ -235,7 +244,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         g.setFont(new Font("Arial", Font.BOLD, 60));
         String title = "SELECT YOUR FIGHTER";
         int titleWidth = g.getFontMetrics().stringWidth(title);
-        g.drawString(title, (WIDTH - titleWidth) / 2, 120);
+        g.drawString(title, (GameConfig.WIDTH - titleWidth) / 2, 120);
 
         String[] names = {"Ninja", "Boxer"};
         String[] stats = {
@@ -287,12 +296,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         String help2 = "P2: Arrow Left/Right to choose, ENTER to confirm";
         int h1Width = g.getFontMetrics().stringWidth(help1);
         int h2Width = g.getFontMetrics().stringWidth(help2);
-        g.drawString(help1, (WIDTH - h1Width) / 2, 850);
-        g.drawString(help2, (WIDTH - h2Width) / 2, 900);
+        g.drawString(help1, (GameConfig.WIDTH - h1Width) / 2, 850);
+        g.drawString(help2, (GameConfig.WIDTH - h2Width) / 2, 900);
     }
     private void drawArena(Graphics g) {
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, GROUND, WIDTH, HEIGHT);
+        g.drawImage(bgStage, 0, 0, GameConfig.WIDTH, GameConfig.HEIGHT, this);
     }
     private void drawFighter(Graphics g) {
         if (player1.getX() <= player2.getX()) {
@@ -317,12 +325,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         g.setFont(new Font("Arial", Font.BOLD, 80));
 
         int textWidth = g.getFontMetrics().stringWidth(winnerText);
-        g.drawString(winnerText, (WIDTH - textWidth) / 2, 480);
+        g.drawString(winnerText, (GameConfig.WIDTH - textWidth) / 2, 480);
 
         g.setFont(new Font("Arial", Font.PLAIN, 40));
         String restart = "Press R to restart";
         int restartWidth = g.getFontMetrics().stringWidth(restart);
-        g.drawString(restart, (WIDTH - restartWidth) / 2, 550);
+        g.drawString(restart, (GameConfig.WIDTH - restartWidth) / 2, 550);
     }
     private void drawBullet(Graphics g) {
         for (Bullet bullet : bullets) {
@@ -342,7 +350,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     }
     private void spawnRandomItem() {
         int x = 300 +  random.nextInt(1320);
-        int y = GROUND - 600;
+        int y = GameConfig.GROUND - 600;
 
         int type = random.nextInt(5);
 
@@ -361,10 +369,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private void handleItemFallAndCollect() {
         for (Item item : items) {
 
-            if (item.getY() < GROUND - item.getSize()) {
+            if (item.getY() < GameConfig.GROUND - item.getSize()) {
                 item.plusY();
-                if (item.getY() >= GROUND - item.getSize()) {
-                    item.setY(GROUND - item.getSize());
+                if (item.getY() >= GameConfig.GROUND - item.getSize()) {
+                    item.setY(GameConfig.GROUND - item.getSize());
                 }
             }
 

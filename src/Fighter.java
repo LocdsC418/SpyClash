@@ -16,9 +16,7 @@ public abstract class Fighter implements Movable, Attackable {
     private int stunTimer = 0;
     private int knockbackX = 0;
 
-    private final int GROUND = 920;
     private final int GRAVITY = 2;
-    private final int SCREEN_WIDTH = 1920;
 
     private boolean onGround = true;
     private boolean leftPressed = false;
@@ -52,7 +50,7 @@ public abstract class Fighter implements Movable, Attackable {
 
     public Fighter(int startX, Color color, int maxHP) {
         this.x = startX;
-        this.y = GROUND - height;
+        this.y = GameConfig.GROUND - height;
         this.color = color;
         this.maxHP = maxHP;
         this.hp = maxHP;
@@ -280,15 +278,15 @@ public abstract class Fighter implements Movable, Attackable {
     }
     private void checkPosition() {
         if (x < 0) x = 0;
-        if (x > SCREEN_WIDTH - width) x = SCREEN_WIDTH - width;
+        if (x > GameConfig.WIDTH - width) x = GameConfig.WIDTH - width;
     }
     private void updateGravity() {
         if (!onGround){
             velocityY += GRAVITY;
             y += velocityY;
 
-            if (y + height >= GROUND){
-                y = GROUND - height;
+            if (y + height >= GameConfig.GROUND){
+                y = GameConfig.GROUND - height;
                 velocityY = 0;
                 onGround = true;
                 jumpCount = 0;
