@@ -1,4 +1,4 @@
-package src;
+package src.fighter;
 
 public interface Movable {
     void setLeftPressed(boolean pressed);

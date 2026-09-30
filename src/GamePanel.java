@@ -1,5 +1,8 @@
 package src;
 
+import src.fighter.Assassin;
+import src.fighter.Enforcer;
+import src.fighter.Fighter;
 import src.item.*;
 import src.weapon.Bullet;
 

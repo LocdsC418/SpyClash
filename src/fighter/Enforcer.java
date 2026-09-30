@@ -1,4 +1,6 @@
-package src;
+package src.fighter;
+
+import src.Assets;
 
 import java.awt.Color;
 
