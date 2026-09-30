@@ -6,7 +6,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -47,7 +46,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        bgStage = loadImage("/res/background/stage.gif");
+        bgStage = Assets.loadImage("/res/background/stage.gif");
 
         timer = new Timer(16, this);
         timer.start();
@@ -206,19 +205,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private Fighter createFighter(int choice, int startX, Color color) {
         if (choice == 0) {
-            return new Ninja(startX, color);
+            return new Assassin(startX, color);
         } else {
-            return new Boxer(startX, color);
+            return new Enforcer(startX, color);
         }
-    }
-
-    private Image loadImage(String path) {
-        URL url = getClass().getResource(path);
-        if (url == null) {
-            System.out.println("Image not found: " + path);
-            return null;
-        }
-        return new ImageIcon(url).getImage();
     }
 
     private void startGame() {
@@ -246,7 +236,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         int titleWidth = g.getFontMetrics().stringWidth(title);
         g.drawString(title, (GameConfig.WIDTH - titleWidth) / 2, 120);
 
-        String[] names = {"Ninja", "Boxer"};
+        String[] names = {"Assassin", "Enforcer"};
         String[] stats = {
                 "SPD:7  DMG:7 HP:80 JMP:High",
                 "SPD:4  DMG:15 HP:120 JMP:Low"

@@ -2,10 +2,10 @@ package src;
 
 import java.awt.Color;
 
-public class Boxer extends Fighter {
+public class Enforcer extends Fighter {
 
-    public Boxer(int startX, Color color) {
-        super(startX, color, 120);
+    public Enforcer(int startX, Color color) {
+        super(startX, color, 120, Assets.loadImage("/res/fighter/assassin.png"));
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Boxer extends Fighter {
     public int getAttackDuration() { return 20; }
 
     @Override
-    public String getName() { return "Boxer"; }
+    public String getName() { return "Enforcer"; }
 
     @Override
     public boolean canDoubleJump() { return true; }

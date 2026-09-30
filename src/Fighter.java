@@ -1,17 +1,16 @@
 package src;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 
 public abstract class Fighter implements Movable, Attackable {
 
     private int x;
     private int y;
-    private int width = 60;
-    private int height = 120;
+    private int width = 120;
+    private int height = 240;
     private int velocityY = 0;
     private Color color;
+    private Image fighterImage;
 
     private int stunTimer = 0;
     private int knockbackX = 0;
@@ -48,12 +47,13 @@ public abstract class Fighter implements Movable, Attackable {
 
     public abstract boolean canDoubleJump();
 
-    public Fighter(int startX, Color color, int maxHP) {
+    public Fighter(int startX, Color color, int maxHP, Image figherImage) {
         this.x = startX;
         this.y = GameConfig.GROUND - height;
         this.color = color;
         this.maxHP = maxHP;
         this.hp = maxHP;
+        this.fighterImage = figherImage;
     }
 
     public void update() {
@@ -73,8 +73,16 @@ public abstract class Fighter implements Movable, Attackable {
     }
 
     public void draw(Graphics g) {
+        if (fighterImage != null) {
+            if (facingDirection == 1) {
+                g.drawImage(fighterImage, x, y, width, height, null);
+            } else {
+                g.drawImage(fighterImage, x+width, y, -(width), height, null);
+            }
+        }
+
         g.setColor(color);
-        g.fillRect(x, y, width, height);
+        g.drawRect(x, y, width, height);
 
         if (isLongRange()) return;
         if (attacking) {
