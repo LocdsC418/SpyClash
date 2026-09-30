@@ -1,5 +1,6 @@
-package src;
+package src.item;
 
+import src.Fighter;
 import src.weapon.Weapon;
 
 public abstract class WeaponItem extends Item {

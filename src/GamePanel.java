@@ -1,5 +1,6 @@
 package src;
 
+import src.item.*;
 import src.weapon.Bullet;
 
 import javax.swing.*;

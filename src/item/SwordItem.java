@@ -1,4 +1,4 @@
-package src;
+package src.item;
 
 import src.weapon.Sword;
 import src.weapon.Weapon;

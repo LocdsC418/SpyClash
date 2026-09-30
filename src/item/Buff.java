@@ -1,4 +1,4 @@
-package src;
+package src.item;
 
 public abstract class Buff extends Item{
 
