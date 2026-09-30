@@ -1,5 +1,8 @@
 package src;
 
+import src.weapon.Bullet;
+import src.weapon.Weapon;
+
 import java.awt.*;
 
 public abstract class Fighter implements Movable, Attackable {

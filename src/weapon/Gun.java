@@ -1,4 +1,6 @@
-package src;
+package src.weapon;
+
+import src.Fighter;
 
 import java.awt.Color;
 

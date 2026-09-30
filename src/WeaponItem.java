@@ -1,5 +1,7 @@
 package src;
 
+import src.weapon.Weapon;
+
 public abstract class WeaponItem extends Item {
 
     public WeaponItem(int x, int y) {

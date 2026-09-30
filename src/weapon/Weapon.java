@@ -1,7 +1,8 @@
-package src;
+package src.weapon;
+
+import src.Fighter;
 
 import java.awt.Color;
-import java.awt.Graphics;
 
 public abstract class Weapon {
     private int useLeft;

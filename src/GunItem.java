@@ -1,5 +1,8 @@
 package src;
 
+import src.weapon.Gun;
+import src.weapon.Weapon;
+
 import java.awt.Color;
 
 public class GunItem extends WeaponItem {

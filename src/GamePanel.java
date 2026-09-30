@@ -1,5 +1,7 @@
 package src;
 
+import src.weapon.Bullet;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
