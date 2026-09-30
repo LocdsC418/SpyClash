@@ -1,5 +1,7 @@
-package src;
+package src.ui;
 
+import src.core.Assets;
+import src.core.GameConfig;
 import src.fighter.Assassin;
 import src.fighter.Enforcer;
 import src.fighter.Fighter;

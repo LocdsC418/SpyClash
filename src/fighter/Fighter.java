@@ -1,6 +1,6 @@
 package src.fighter;
 
-import src.GameConfig;
+import src.core.GameConfig;
 import src.weapon.Bullet;
 import src.weapon.Weapon;
 

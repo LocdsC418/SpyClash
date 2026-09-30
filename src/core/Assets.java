@@ -1,4 +1,4 @@
-package src;
+package src.core;
 
 import javax.swing.ImageIcon;
 import java.awt.Image;
