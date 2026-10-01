@@ -49,7 +49,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     final int SPAWN_INTERVAL = 300;
 
     public GamePanel(){
-        this.setPreferredSize(new Dimension(GameConfig.WIDTH, GameConfig.HEIGHT));
+        this.setPreferredSize(GameConfig.SCREEN_SIZE);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(this);
@@ -208,8 +208,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
 
     private Fighter createFighter(int choice, int startX, Color color) {
         if (choice == 0) {
