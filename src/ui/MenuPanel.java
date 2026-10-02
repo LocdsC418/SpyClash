@@ -53,7 +53,15 @@ public class MenuPanel extends JPanel implements KeyListener {
             selected = (selected - 1 + options.length) % options.length;
         } else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
             selected = (selected + 1) % options.length;
-        } else if (key == KeyEvent.VK_ENTER) {
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_ENTER) {
             if (selected == 0) onPvP.run();
             else if (selected == 1) onPvC.run();
             else System.exit(0);
@@ -61,9 +69,6 @@ public class MenuPanel extends JPanel implements KeyListener {
 
         repaint();
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
 
     @Override
     public void keyTyped(KeyEvent e) {}
