@@ -19,30 +19,26 @@ import java.util.Random;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
-    Image bgStage;
+    private static final int FREEZE_DURATION = 6;
+    private static final int SPAWN_INTERVAL = 300;
 
-    int freezeTimer = 0;
-    final int FREEZE_DURATION = 6;
-
-    Fighter player1;
-    Fighter player2;
-
-    HealthBar hpBar1;
-    HealthBar hpBar2;
-
-    boolean gameOver = false;
-    String winnerText = "";
-
+    private Image bgStage;
+    private Timer timer;
+    private Random random = new Random();
     private Runnable onRestart;
 
-    Timer timer;
+    private Fighter player1;
+    private Fighter player2;
+    private HealthBar hpBar1;
+    private HealthBar hpBar2;
 
-    ArrayList<Bullet> bullets = new ArrayList<>();
+    private ArrayList<Bullet> bullets = new ArrayList<>();
+    private ArrayList<Item> items = new ArrayList<>();
 
-    ArrayList<Item> items = new ArrayList<>();
-    Random random = new Random();
-    int spawnTimer = 0;
-    final int SPAWN_INTERVAL = 300;
+    private int freezeTimer = 0;
+    private int spawnTimer = 0;
+    private boolean gameOver = false;
+    private String winnerText = "";
 
     public GamePanel(){
         this.setPreferredSize(GameConfig.SCREEN_SIZE);

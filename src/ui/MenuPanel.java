@@ -8,11 +8,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class MenuPanel extends JPanel implements KeyListener {
-    Image bgMenu;
+
     private final String[] options = {"Player vs Player", "Player vs Com", "Quit"};
-    private int selected = 0;
+
+    private Image bgMenu;
     private Runnable onPvP;
     private Runnable onPvC;
+
+    private int selected = 0;
 
     public MenuPanel(Runnable onPvP, Runnable onPvC) {
         this.onPvP = onPvP;

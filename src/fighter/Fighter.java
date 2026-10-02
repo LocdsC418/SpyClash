@@ -8,6 +8,8 @@ import java.awt.*;
 
 public abstract class Fighter implements Movable, Attackable {
 
+    private static final int GRAVITY = 2;
+
     private int x;
     private int y;
     private int width = 120;
@@ -18,8 +20,6 @@ public abstract class Fighter implements Movable, Attackable {
 
     private int stunTimer = 0;
     private int knockbackX = 0;
-
-    private final int GRAVITY = 2;
 
     private boolean onGround = true;
     private boolean leftPressed = false;

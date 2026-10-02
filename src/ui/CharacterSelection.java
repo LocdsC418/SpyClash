@@ -10,11 +10,13 @@ import java.util.function.BiConsumer;
 
 public class CharacterSelection extends JPanel implements KeyListener {
 
+    private BiConsumer<Integer, Integer> onConfirm;
+
     private int p1Choice = 0;
     private int p2Choice = 1;
     private boolean p1Ready = false;
     private boolean p2Ready = false;
-    private BiConsumer<Integer, Integer> onConfirm;
+
     public CharacterSelection(BiConsumer<Integer, Integer> onConfirm) {
         this.onConfirm = onConfirm;
         this.setPreferredSize(GameConfig.SCREEN_SIZE);
