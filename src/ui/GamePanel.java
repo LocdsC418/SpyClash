@@ -33,12 +33,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     boolean gameOver = false;
     String winnerText = "";
 
-    boolean selectingCharacter = true;
-    int p1Choice = 0;
-    int p2Choice = 1;
-    boolean p1Ready = false;
-    boolean p2Ready = false;
-
     private Runnable onRestart;
 
     Timer timer;
@@ -153,8 +147,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (selectingCharacter) return;
-
         if (e.getKeyCode() == KeyEvent.VK_A) {
             player1.setLeftPressed(false);
         }
@@ -193,7 +185,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         hpBar1 = new HealthBar(40, 60);
         hpBar2 = new HealthBar(1480, 60);
-        selectingCharacter = false;
         gameOver = false;
         winnerText = "";
         timer.start();
