@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        bgStage = Assets.loadImage("/res/background/stage.gif");
+        bgStage = Assets.loadImage("/res/background/rooftop.png");
 
         timer = new Timer(16, this);
     }
