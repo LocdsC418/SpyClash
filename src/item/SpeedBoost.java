@@ -20,7 +20,7 @@ public class SpeedBoost extends Buff {
     public int getEffectDuration() { return 300; }
 
     @Override
-    public int getAmount() { return 5; }
+    public int getAmount() { return 3; }
 
     @Override
     public void applyTo(Fighter f) {

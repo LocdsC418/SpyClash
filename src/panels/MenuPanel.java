@@ -13,7 +13,6 @@ public class MenuPanel extends JPanel {
     private JButton btnQuit;
 
     public MenuPanel() {
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);
         this.setBackground(Color.BLACK);
         this.setLayout(null);
 
@@ -24,7 +23,7 @@ public class MenuPanel extends JPanel {
         final int gap = 20;
         final int startY = 320;
 
-        int x = (GameConfig.WINDOW_WIDTH - width) / 2;
+        int x = (GameConfig.WIDTH - width) / 2;
 
         btnPvP = new JButton("Player vs Player");
         btnPvP.setFont(new Font("Arial", Font.BOLD, 24));

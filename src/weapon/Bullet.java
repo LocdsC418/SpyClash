@@ -5,16 +5,16 @@ import src.fighter.Fighter;
 import java.awt.*;
 
 public class Bullet {
-    private static final int MUZZLE_OFFSET_X = 75;
-    private static final int MUZZLE_HEIGHT = 140;
+    private static final int MUZZLE_OFFSET_X = 50;
+    private static final int MUZZLE_HEIGHT = 93;
 
     private Fighter owner;
     private int x;
     private int y;
-    private int width = 30;
-    private int height = 30;
+    private int width = 20;
+    private int height = 20;
     private int direction;
-    private int speed = 20;
+    private int speed = 13;
     private int damage;
     private int distanceTraveled = 0;
     private int maxRange;
@@ -24,7 +24,7 @@ public class Bullet {
         this.owner = owner;
         this.direction = owner.getFacingDirection();
         this.damage = owner.getTotalDamage();
-        this.maxRange = 2000;
+        this.maxRange = 1333;
 
         if (direction == 1) {
             this.x = owner.getX() + owner.getWidth() + MUZZLE_OFFSET_X;

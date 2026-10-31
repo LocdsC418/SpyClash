@@ -9,19 +9,19 @@ public class Enforcer extends Fighter {
     }
 
     @Override
-    public int getSpeed() { return 4; }
+    public int getSpeed() { return 5; }
 
     @Override
-    public int getJumpForce() { return -25; }
+    public int getJumpForce() { return -22; }
 
     @Override
-    public int getAttackRange() { return 120; }
+    public int getAttackRange() { return 80; }
 
     @Override
-    public int getAttackDamage() { return 15; }
+    public int getAttackDamage() { return 11; }
 
     @Override
-    public int getAttackDuration() { return 20; }
+    public int getAttackDuration() { return 15; }
 
     @Override
     public String getName() { return "Enforcer"; }

@@ -13,7 +13,7 @@ public class Sword extends Weapon {
     @Override
     public int getDamage() { return 25; }
     @Override
-    public int getRange() { return 180; }
+    public int getRange() { return 120; }
     @Override
     public int getAttackDuration() { return 30; }
     @Override

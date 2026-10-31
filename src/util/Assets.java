@@ -4,11 +4,10 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 
 public final class Assets {
 
-    private static final Map<String, Image> imageCache = new HashMap<>();
+    private static final HashMap<String, Image> imageCache = new HashMap<>();
 
     private Assets() {}
 

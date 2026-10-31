@@ -1,5 +1,7 @@
 package src.panels;
 
+import src.util.GameConfig;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +13,7 @@ public class GameWindow extends JFrame implements ActionListener {
     private GamePanel gamePanel = new GamePanel();
 
     public GameWindow() {
-        super("Fighting Game");
+        super("SpyClash");
 
         menuPanel.getPvPButton().addActionListener(this);
         menuPanel.getQuitButton().addActionListener(this);
@@ -25,7 +27,7 @@ public class GameWindow extends JFrame implements ActionListener {
         this.add(menuPanel);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
-        this.pack();
+        this.setSize(GameConfig.WIDTH, GameConfig.HEIGHT);
         this.setLocationRelativeTo(null);
     }
 

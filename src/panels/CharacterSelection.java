@@ -1,5 +1,8 @@
 package src.panels;
 
+import src.fighter.Assassin;
+import src.fighter.Enforcer;
+import src.fighter.Fighter;
 import src.util.Assets;
 import src.util.GameConfig;
 
@@ -11,18 +14,14 @@ import java.awt.event.ActionListener;
 public class CharacterSelection extends JPanel implements ActionListener {
 
     private static final String[] NAMES = {"Assassin", "Enforcer"};
-    private static final String[] STATS = {
-            "SPD:7  DMG:7  HP:80  JMP:High",
-            "SPD:4  DMG:15  HP:120  JMP:Low"
-    };
     private static final String[] MAPS = {"Rooftop Night", "Rooftop Morning"};
     private static final String[] IMAGE_PATHS = {"/res/fighter/assassin/idle.png", "/res/fighter/enforcer/idle.png"};
-    private static final Color[] PREVIEW_COLORS = {Color.GREEN, Color.ORANGE};
 
-    private static final int P1_CENTER_X = GameConfig.WINDOW_WIDTH / 4;
-    private static final int P2_CENTER_X = GameConfig.WINDOW_WIDTH * 3 / 4;
+    private static final int P1_CENTER_X = GameConfig.WIDTH / 4;
+    private static final int P2_CENTER_X = GameConfig.WIDTH * 3 / 4;
 
     private Image[] fighterImages = new Image[NAMES.length];
+    private Fighter[] fighters = {new Assassin(0, Color.RED), new Enforcer(0, Color.RED)};
 
     private JComboBox<String> mapBox;
     private JComboBox<String> p1Box;
@@ -35,7 +34,6 @@ public class CharacterSelection extends JPanel implements ActionListener {
     private int mapChoice = 0;
 
     public CharacterSelection() {
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);
         this.setBackground(Color.BLACK);
         this.setLayout(null);
 
@@ -45,14 +43,14 @@ public class CharacterSelection extends JPanel implements ActionListener {
 
         p1Box = createPickBox(P1_CENTER_X, NAMES);
         p2Box = createPickBox(P2_CENTER_X, NAMES);
-        mapBox = createPickBox(GameConfig.WINDOW_WIDTH / 2, MAPS);
+        mapBox = createPickBox(GameConfig.WIDTH / 2, MAPS);
 
         final int navWidth = 200;
         final int navHeight = 55;
         final int navGap = 20;
         final int navY = 640;
 
-        int navX = (GameConfig.WINDOW_WIDTH - (navWidth * 2 + navGap)) / 2;
+        int navX = (GameConfig.WIDTH - (navWidth * 2 + navGap)) / 2;
 
         btnBack = new JButton("BACK");
         btnBack.setFont(new Font("Arial", Font.BOLD, 24));
@@ -100,7 +98,7 @@ public class CharacterSelection extends JPanel implements ActionListener {
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 44));
-        drawCentered(g, "SELECT YOUR FIGHTER", GameConfig.WINDOW_WIDTH / 2, 80);
+        drawCentered(g, "SELECT YOUR FIGHTER", GameConfig.WIDTH / 2, 80);
 
         g.setFont(new Font("Arial", Font.BOLD, 32));
         g.setColor(Color.RED);
@@ -108,7 +106,7 @@ public class CharacterSelection extends JPanel implements ActionListener {
         g.setColor(Color.CYAN);
         drawCentered(g, "PLAYER 2", P2_CENTER_X, 150);
         g.setColor(Color.WHITE);
-        drawCentered(g, "CHOOSE MAP", GameConfig.WINDOW_WIDTH / 2, 150);
+        drawCentered(g, "CHOOSE MAP", GameConfig.WIDTH / 2, 150);
 
         drawPreview(g, p1Choice, P1_CENTER_X);
         drawPreview(g, p2Choice, P2_CENTER_X);
@@ -126,7 +124,7 @@ public class CharacterSelection extends JPanel implements ActionListener {
         if (fighterImages[choice] != null) {
             g.drawImage(fighterImages[choice], centerX - height / 2, y, height, height, this);
         } else {
-            g.setColor(PREVIEW_COLORS[choice]);
+            g.setColor(Color.WHITE);
             g.fillRect(x, y, width, height);
         }
 
@@ -135,7 +133,14 @@ public class CharacterSelection extends JPanel implements ActionListener {
         drawCentered(g, NAMES[choice], centerX, y + height + 40);
 
         g.setFont(new Font("Arial", Font.PLAIN, 18));
-        drawCentered(g, STATS[choice], centerX, y + height + 70);
+        drawCentered(g, getStatsText(fighters[choice]), centerX, y + height + 70);
+    }
+
+    private String getStatsText(Fighter fighter) {
+        return "SPD:" + fighter.getSpeed()
+                + "  DMG:" + fighter.getAttackDamage()
+                + "  HP:" + fighter.getMaxHP()
+                + "  JMP:" + Math.abs(fighter.getJumpForce());
     }
 
     private void drawCentered(Graphics g, String text, int centerX, int y) {

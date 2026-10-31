@@ -15,7 +15,7 @@ public class Gun extends Weapon {
     @Override
     public int getDamage() { return 10; }
     @Override
-    public int getRange() { return 220; }
+    public int getRange() { return 147; }
     @Override
     public int getAttackDuration() { return 30; }
     @Override

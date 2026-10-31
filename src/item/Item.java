@@ -11,7 +11,7 @@ public abstract class Item {
 
     private int x;
     private int y;
-    private int size = 40;
+    private int size = 27;
     private boolean collected = false;
 
     public Item(int x, int y) {
@@ -36,8 +36,8 @@ public abstract class Item {
         g.setColor(Color.WHITE);
         g.drawRect(x, y, size, size);
 
-        g.setFont(new Font("Arial", Font.BOLD, 14));
-        g.drawString(getName(), x, y - 8);
+        g.setFont(new Font("Arial", Font.BOLD, 9));
+        g.drawString(getName(), x, y - 5);
     }
 
     public Rectangle getHitbox() {

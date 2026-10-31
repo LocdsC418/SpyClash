@@ -43,7 +43,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private String winnerText = "";
 
     public GamePanel(){
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.addKeyListener(this);
@@ -54,7 +53,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         final int overGap = 20;
         final int overY = 420;
 
-        int overX = (GameConfig.WINDOW_WIDTH - (overWidth * 2 + overGap)) / 2;
+        int overX = (GameConfig.WIDTH - (overWidth * 2 + overGap)) / 2;
 
         btnPlayAgain = new JButton("PLAY AGAIN");
         btnPlayAgain.setFont(new Font("Arial", Font.BOLD, 24));
@@ -74,7 +73,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         final int pauseHeight = 45;
         final int pauseY = 20;
 
-        int pauseX = (GameConfig.WINDOW_WIDTH - pauseWidth) / 2;
+        int pauseX = (GameConfig.WIDTH - pauseWidth) / 2;
 
         btnPause = new JButton("PAUSE");
         btnPause.setFont(new Font("Arial", Font.BOLD, 20));
@@ -123,27 +122,18 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     public void paintComponent(Graphics g){
         super.paintComponent(g);
 
+        drawArena(g);
 
-
-        Graphics2D g2d = (Graphics2D) g.create();
-        double scaleX = (double) getWidth() / GameConfig.WIDTH;
-        double scaleY = (double) getHeight() / GameConfig.HEIGHT;
-        g2d.scale(scaleX, scaleY);
-
-        drawArena(g2d);
-
-        drawFighter(g2d);
-        drawBullet(g2d);
-        drawItem(g2d);
-        drawHUD(g2d);
+        drawFighter(g);
+        drawBullet(g);
+        drawItem(g);
+        drawHUD(g);
 
         if (gameOver) {
-            drawGameOver(g2d);
+            drawGameOver(g);
         } else if (paused) {
-            drawPaused(g2d);
+            drawPaused(g);
         }
-
-        g2d.dispose();
     }
 
     @Override
@@ -232,8 +222,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         spawnTimer = 0;
 
         bgStage = Assets.loadImage(createBgStage(mapChoice));
-        player1 = createFighter(p1Choice, 200, Color.RED);
-        player2 = createFighter(p2Choice, 1600, Color.BLUE);
+        player1 = createFighter(p1Choice, 133, Color.RED);
+        player2 = createFighter(p2Choice, 1067, Color.BLUE);
         player2.setFacingDirection(-1);
 
         gameOver = false;
@@ -298,13 +288,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
     private void drawHUD(Graphics g) {
-        drawHealthBar(g, 40, player1, "Player1: " + player1.getName() + "[WASD + F]");
-        drawHealthBar(g, 1480, player2, "Player2: " + player2.getName() + "[Arrow + /]");
-        drawItemStatus(g, 40, player1, false);
-        drawItemStatus(g, 1880, player2, true);
+        drawHealthBar(g, 27, player1, "Player1: " + player1.getName() + "[WASD + F]");
+        drawHealthBar(g, 987, player2, "Player2: " + player2.getName() + "[Arrow + /]");
+        drawItemStatus(g, 27, player1, false);
+        drawItemStatus(g, 1253, player2, true);
     }
     private void drawItemStatus(Graphics g, int x, Fighter fighter, boolean alignRight) {
-        final int y = 138;
+        final int y = 92;
         final int ticksPerSecond = 60;
 
         String text = "";
@@ -329,15 +319,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             return;
         }
 
-        g.setFont(new Font("Arial", Font.BOLD, 26));
+        g.setFont(new Font("Arial", Font.BOLD, 17));
         int drawX = alignRight ? x - g.getFontMetrics().stringWidth(text) : x;
 
         drawShadowText(g, text, drawX, y);
     }
     private void drawHealthBar(Graphics g, int x, Fighter fighter, String label) {
-        final int width = 400;
-        final int height = 40;
-        final int y = 60;
+        final int width = 267;
+        final int height = 27;
+        final int y = 40;
 
         int currentHP = fighter.getHP();
         int maxHP = fighter.getMaxHP();
@@ -355,8 +345,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
         g.fillRect(x + 1, y + 1, hpWidth - 1, height - 1);
 
-        g.setFont(new Font("Arial", Font.BOLD, 24));
-        drawShadowText(g, label, x, y - 10);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        drawShadowText(g, label, x, y - 7);
     }
     private void drawShadowText(Graphics g, String text, int x, int y) {
         g.setColor(Color.BLACK);
@@ -365,19 +355,19 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         g.drawString(text, x, y);
     }
     private void drawGameOver(Graphics g) {
-        g.setFont(new Font("Arial", Font.BOLD, 80));
+        g.setFont(new Font("Arial", Font.BOLD, 53));
 
         int textWidth = g.getFontMetrics().stringWidth(winnerText);
-        drawShadowText(g, winnerText, (GameConfig.WIDTH - textWidth) / 2, 480);
+        drawShadowText(g, winnerText, (GameConfig.WIDTH - textWidth) / 2, 320);
     }
     private void drawPaused(Graphics g) {
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, GameConfig.WIDTH, GameConfig.HEIGHT);
 
-        g.setFont(new Font("Arial", Font.BOLD, 100));
+        g.setFont(new Font("Arial", Font.BOLD, 67));
         String text = "PAUSED";
         int textWidth = g.getFontMetrics().stringWidth(text);
-        drawShadowText(g, text, (GameConfig.WIDTH - textWidth) / 2, 560);
+        drawShadowText(g, text, (GameConfig.WIDTH - textWidth) / 2, 373);
     }
     private void drawBullet(Graphics g) {
         for (Bullet bullet : bullets) {
@@ -395,8 +385,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
     private void spawnRandomItem() {
-        int x = 300 +  random.nextInt(1320);
-        int y = GameConfig.GROUND - 600;
+        int x = 200 + random.nextInt(880);
+        int y = GameConfig.GROUND - 400;
 
         int type = random.nextInt(5);
 
@@ -513,7 +503,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         freezeTimer = FREEZE_DURATION;
 
-        target.getKnockBack(20 * direction);
+        target.getKnockBack(16 * direction);
         target.getStunned(10);
     }
 

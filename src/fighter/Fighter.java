@@ -15,8 +15,8 @@ public abstract class Fighter {
 
     private int x;
     private int y;
-    private int width = 120;
-    private int height = 216;
+    private int width = 80;
+    private int height = 144;
     private int velocityY = 0;
     private Color color;
 
@@ -97,7 +97,7 @@ public abstract class Fighter {
     }
 
     public void draw(Graphics g) {
-        final int spriteSize = 240;
+        final int spriteSize = 160;
         final int spritePixels = 64;
 
         Image image = getCurrentImage();
@@ -113,14 +113,14 @@ public abstract class Fighter {
             }
         }
 
-        g.setColor(color);
-        g.drawRect(x, y, width, height);
+//        g.setColor(color);
+//        g.drawRect(x, y, width, height);
 
         if (isLongRange()) return;
         if (attacking) {
             g.setColor(getAttackColor());
             int attackX = (facingDirection == 1) ? x + width : x - getFinalAttackRange();
-            g.drawRect(attackX, y + 60, getFinalAttackRange(), 120);
+//            g.drawRect(attackX, y + 40, getFinalAttackRange(), 80);
         }
     }
 
@@ -181,9 +181,9 @@ public abstract class Fighter {
             return null;
         }
         if (facingDirection == 1) {
-            return new Rectangle(x + width, y + 60, getFinalAttackRange(), 120);
+            return new Rectangle(x + width, y + 40, getFinalAttackRange(), 80);
         } else {
-            return new Rectangle(x - getFinalAttackRange(), y + 60, getFinalAttackRange(), 120);
+            return new Rectangle(x - getFinalAttackRange(), y + 40, getFinalAttackRange(), 80);
         }
     }
     public Rectangle getBodyHitbox() {

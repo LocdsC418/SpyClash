@@ -5,17 +5,17 @@ import java.awt.Color;
 public class Assassin extends Fighter {
 
     public Assassin(int startX, Color color) {
-        super(startX, color, 80, "assassin");
+        super(startX, color, 100, "assassin");
     }
 
     @Override
-    public int getSpeed() { return 7; }
+    public int getSpeed() { return 6; }
 
     @Override
-    public int getJumpForce() { return -30; }
+    public int getJumpForce() { return -24; }
 
     @Override
-    public int getAttackRange() { return 100; }
+    public int getAttackRange() { return 67; }
 
     @Override
     public int getAttackDamage() { return 7; }
