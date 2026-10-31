@@ -11,7 +11,7 @@ public class GameWindow extends JFrame implements ActionListener {
     private GamePanel gamePanel = new GamePanel();
 
     public GameWindow() {
-        super("Fighting Game");
+        super("SpyClash");
 
         menuPanel.getPvPButton().addActionListener(this);
         menuPanel.getQuitButton().addActionListener(this);
