@@ -1,7 +1,7 @@
-package src.ui;
+package src.panels;
 
-import src.core.Assets;
-import src.core.GameConfig;
+import src.util.Assets;
+import src.util.GameConfig;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,16 +21,6 @@ public class CharacterSelection extends JPanel implements ActionListener {
 
     private static final int P1_CENTER_X = GameConfig.WINDOW_WIDTH / 4;
     private static final int P2_CENTER_X = GameConfig.WINDOW_WIDTH * 3 / 4;
-    private static final int PICK_W = 260;
-    private static final int PICK_H = 45;
-    private static final int PICK_Y = 180;
-    private static final int PREVIEW_W = 140;
-    private static final int PREVIEW_H = 280;
-    private static final int PREVIEW_Y = 255;
-    private static final int NAV_W = 200;
-    private static final int NAV_H = 55;
-    private static final int NAV_GAP = 20;
-    private static final int NAV_Y = 640;
 
     private Image[] fighterImages = new Image[NAMES.length];
 
@@ -45,9 +35,9 @@ public class CharacterSelection extends JPanel implements ActionListener {
     private int mapChoice = 0;
 
     public CharacterSelection() {
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);   // size the window uses when pack() is called
-        this.setBackground(Color.BLACK);                 // colour behind everything that is drawn
-        this.setLayout(null);                            // no layout manager, components are placed with setBounds
+        this.setPreferredSize(GameConfig.SCREEN_SIZE);
+        this.setBackground(Color.BLACK);
+        this.setLayout(null);
 
         for (int i = 0; i < NAMES.length; i++) {
             fighterImages[i] = Assets.loadImage(IMAGE_PATHS[i]);
@@ -57,9 +47,24 @@ public class CharacterSelection extends JPanel implements ActionListener {
         p2Box = createPickBox(P2_CENTER_X, NAMES);
         mapBox = createPickBox(GameConfig.WINDOW_WIDTH / 2, MAPS);
 
-        int navX = (GameConfig.WINDOW_WIDTH - (NAV_W * 2 + NAV_GAP)) / 2;
-        btnBack = createNavButton("BACK", navX);
-        btnStart = createNavButton("START", navX + NAV_W + NAV_GAP);
+        final int navWidth = 200;
+        final int navHeight = 55;
+        final int navGap = 20;
+        final int navY = 640;
+
+        int navX = (GameConfig.WINDOW_WIDTH - (navWidth * 2 + navGap)) / 2;
+
+        btnBack = new JButton("BACK");
+        btnBack.setFont(new Font("Arial", Font.BOLD, 24));
+        btnBack.setFocusPainted(false);
+        btnBack.setBounds(navX, navY, navWidth, navHeight);
+        this.add(btnBack);
+
+        btnStart = new JButton("START");
+        btnStart.setFont(new Font("Arial", Font.BOLD, 24));
+        btnStart.setFocusPainted(false);
+        btnStart.setBounds(navX + navWidth + navGap, navY, navWidth, navHeight);
+        this.add(btnStart);
 
         reset();
     }
@@ -110,23 +115,27 @@ public class CharacterSelection extends JPanel implements ActionListener {
     }
 
     private void drawPreview(Graphics g, int choice, int centerX) {
-        int x = centerX - PREVIEW_W / 2;
+        final int width = 140;
+        final int height = 280;
+        final int y = 255;
+
+        int x = centerX - width / 2;
         g.setColor(Color.DARK_GRAY);
-        g.fillRect(x, PREVIEW_Y, PREVIEW_W, PREVIEW_H);
+        g.fillRect(x, y, width, height);
 
         if (fighterImages[choice] != null) {
-            g.drawImage(fighterImages[choice], centerX - PREVIEW_H / 2, PREVIEW_Y, PREVIEW_H, PREVIEW_H, this);
+            g.drawImage(fighterImages[choice], centerX - height / 2, y, height, height, this);
         } else {
             g.setColor(PREVIEW_COLORS[choice]);
-            g.fillRect(x, PREVIEW_Y, PREVIEW_W, PREVIEW_H);
+            g.fillRect(x, y, width, height);
         }
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 28));
-        drawCentered(g, NAMES[choice], centerX, PREVIEW_Y + PREVIEW_H + 40);
+        drawCentered(g, NAMES[choice], centerX, y + height + 40);
 
         g.setFont(new Font("Arial", Font.PLAIN, 18));
-        drawCentered(g, STATS[choice], centerX, PREVIEW_Y + PREVIEW_H + 70);
+        drawCentered(g, STATS[choice], centerX, y + height + 70);
     }
 
     private void drawCentered(Graphics g, String text, int centerX, int y) {
@@ -135,20 +144,15 @@ public class CharacterSelection extends JPanel implements ActionListener {
     }
 
     private JComboBox<String> createPickBox(int centerX, String[] init) {
+        final int width = 260;
+        final int height = 45;
+        final int y = 180;
+
         JComboBox<String> box = new JComboBox<>(init);
         box.setFont(new Font("Arial", Font.BOLD, 22));
-        box.setBounds(centerX - PICK_W / 2, PICK_Y, PICK_W, PICK_H);   // x, y, width, height on the panel
-        box.addActionListener(this);                                   // actionPerformed() runs when the choice changes
+        box.setBounds(centerX - width / 2, y, width, height);
+        box.addActionListener(this);
         this.add(box);
         return box;
-    }
-
-    private JButton createNavButton(String text, int x) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 24));
-        button.setFocusPainted(false);   // no focus rectangle around the label after clicking
-        button.setBounds(x, NAV_Y, NAV_W, NAV_H);
-        this.add(button);
-        return button;
     }
 }

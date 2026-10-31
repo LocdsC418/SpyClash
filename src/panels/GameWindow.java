@@ -1,4 +1,4 @@
-package src.ui;
+package src.panels;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,11 +22,11 @@ public class GameWindow extends JFrame implements ActionListener {
         gamePanel.getPauseButton().addActionListener(this);
         gamePanel.getResumeButton().addActionListener(this);
 
-        this.add(menuPanel);                                   // first screen is the menu
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // closing the window ends the program
-        this.setResizable(false);                              // window size stays fixed at 1280x720
-        this.pack();                                           // size the window to fit the panel's preferred size
-        this.setLocationRelativeTo(null);                      // open the window in the middle of the screen
+        this.add(menuPanel);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setResizable(false);
+        this.pack();
+        this.setLocationRelativeTo(null);
     }
 
     @Override
@@ -54,10 +54,10 @@ public class GameWindow extends JFrame implements ActionListener {
     }
 
     private void showPanel(JPanel panel) {
-        this.getContentPane().removeAll();   // take the old screen off the window
-        this.add(panel);                     // put the new screen on
-        this.revalidate();                   // let Swing lay out the new component
-        this.repaint();                      // redraw the window
-        panel.requestFocusInWindow();        // give the new screen keyboard focus
+        this.getContentPane().removeAll();
+        this.add(panel);
+        this.revalidate();
+        this.repaint();
+        panel.requestFocusInWindow();
     }
 }

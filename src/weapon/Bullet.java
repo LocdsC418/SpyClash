@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class Bullet {
     private static final int MUZZLE_OFFSET_X = 75;
-    private static final int MUZZLE_HEIGHT = 140;   // measured up from the feet
+    private static final int MUZZLE_HEIGHT = 140;
 
     private Fighter owner;
     private int x;

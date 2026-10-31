@@ -1,7 +1,7 @@
-package src.ui;
+package src.panels;
 
-import src.core.Assets;
-import src.core.GameConfig;
+import src.util.Assets;
+import src.util.GameConfig;
 import src.fighter.Assassin;
 import src.fighter.Enforcer;
 import src.fighter.Fighter;
@@ -21,13 +21,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private static final int FREEZE_DURATION = 6;
     private static final int SPAWN_INTERVAL = 300;
-    private static final int BTN_W = 200;
-    private static final int BTN_H = 55;
-    private static final int BTN_GAP = 20;
-    private static final int BTN_Y = 420;
-    private static final int PAUSE_W = 140;
-    private static final int PAUSE_H = 45;
-    private static final int PAUSE_Y = 20;
 
     private Image bgStage;
     private Timer timer;
@@ -39,10 +32,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private Fighter player1;
     private Fighter player2;
-    private HealthBar hpBar1;
-    private HealthBar hpBar2;
-    private ItemStatus itemStatus1;
-    private ItemStatus itemStatus2;
 
     private ArrayList<Bullet> bullets = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
@@ -54,18 +43,52 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private String winnerText = "";
 
     public GamePanel(){
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);   // size the window uses when pack() is called
-        this.setBackground(Color.BLACK);                 // colour behind everything that is drawn
-        this.setFocusable(true);                         // panel can take keyboard focus, needed for key input
-        this.addKeyListener(this);                       // keyPressed()/keyReleased() get the key events
-        this.setLayout(null);                            // no layout manager, buttons are placed with setBounds
+        this.setPreferredSize(GameConfig.SCREEN_SIZE);
+        this.setBackground(Color.BLACK);
+        this.setFocusable(true);
+        this.addKeyListener(this);
+        this.setLayout(null);
 
-        int x = (GameConfig.WINDOW_WIDTH - (BTN_W * 2 + BTN_GAP)) / 2;
-        btnPlayAgain = createGameOverButton("PLAY AGAIN", x);
-        btnMenu = createGameOverButton("MENU", x + BTN_W + BTN_GAP);
+        final int overWidth = 200;
+        final int overHeight = 55;
+        final int overGap = 20;
+        final int overY = 420;
 
-        btnPause = createPauseButton("PAUSE");
-        btnResume = createPauseButton("RESUME");
+        int overX = (GameConfig.WINDOW_WIDTH - (overWidth * 2 + overGap)) / 2;
+
+        btnPlayAgain = new JButton("PLAY AGAIN");
+        btnPlayAgain.setFont(new Font("Arial", Font.BOLD, 24));
+        btnPlayAgain.setFocusPainted(false);
+        btnPlayAgain.setBounds(overX, overY, overWidth, overHeight);
+        btnPlayAgain.setVisible(false);
+        this.add(btnPlayAgain);
+
+        btnMenu = new JButton("MENU");
+        btnMenu.setFont(new Font("Arial", Font.BOLD, 24));
+        btnMenu.setFocusPainted(false);
+        btnMenu.setBounds(overX + overWidth + overGap, overY, overWidth, overHeight);
+        btnMenu.setVisible(false);
+        this.add(btnMenu);
+
+        final int pauseWidth = 140;
+        final int pauseHeight = 45;
+        final int pauseY = 20;
+
+        int pauseX = (GameConfig.WINDOW_WIDTH - pauseWidth) / 2;
+
+        btnPause = new JButton("PAUSE");
+        btnPause.setFont(new Font("Arial", Font.BOLD, 20));
+        btnPause.setFocusable(false);
+        btnPause.setBounds(pauseX, pauseY, pauseWidth, pauseHeight);
+        btnPause.setVisible(false);
+        this.add(btnPause);
+
+        btnResume = new JButton("RESUME");
+        btnResume.setFont(new Font("Arial", Font.BOLD, 20));
+        btnResume.setFocusable(false);
+        btnResume.setBounds(pauseX, pauseY, pauseWidth, pauseHeight);
+        btnResume.setVisible(false);
+        this.add(btnResume);
 
         timer = new Timer(16, this);
     }
@@ -213,10 +236,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         player2 = createFighter(p2Choice, 1600, Color.BLUE);
         player2.setFacingDirection(-1);
 
-        hpBar1 = new HealthBar(40, 60);
-        hpBar2 = new HealthBar(1480, 60);
-        itemStatus1 = new ItemStatus(40, 138, false);
-        itemStatus2 = new ItemStatus(1880, 138, true);
         gameOver = false;
         paused = false;
         winnerText = "";
@@ -261,26 +280,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     public JButton getPauseButton() { return btnPause; }
     public JButton getResumeButton() { return btnResume; }
 
-    private JButton createPauseButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 20));
-        button.setFocusable(false);   // clicking it must not take keyboard focus away from the game
-        button.setBounds((GameConfig.WINDOW_WIDTH - PAUSE_W) / 2, PAUSE_Y, PAUSE_W, PAUSE_H);
-        button.setVisible(false);     // hidden until startGame() shows it
-        this.add(button);
-        return button;
-    }
-
-    private JButton createGameOverButton(String text, int x) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 24));
-        button.setFocusPainted(false);   // no focus rectangle around the label after clicking
-        button.setBounds(x, BTN_Y, BTN_W, BTN_H);
-        button.setVisible(false);     // hidden until the game is over
-        this.add(button);
-        return button;
-    }
-
     private void drawArena(Graphics g) {
         g.drawImage(bgStage, 0, 0, GameConfig.WIDTH, GameConfig.HEIGHT, this);
     }
@@ -299,27 +298,86 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
     private void drawHUD(Graphics g) {
-        hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[WASD + F]");
-        hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[Arrow + /]");
-        itemStatus1.draw(g, player1);
-        itemStatus2.draw(g, player2);
+        drawHealthBar(g, 40, player1, "Player1: " + player1.getName() + "[WASD + F]");
+        drawHealthBar(g, 1480, player2, "Player2: " + player2.getName() + "[Arrow + /]");
+        drawItemStatus(g, 40, player1, false);
+        drawItemStatus(g, 1880, player2, true);
+    }
+    private void drawItemStatus(Graphics g, int x, Fighter fighter, boolean alignRight) {
+        final int y = 138;
+        final int ticksPerSecond = 60;
+
+        String text = "";
+        if (fighter.hasWeapon()) {
+            text += fighter.getWeapon().getName() + " x" + fighter.getWeapon().getUseLeft();
+        }
+        if (fighter.getSpeedBoostTimer() > 0) {
+            int seconds = (fighter.getSpeedBoostTimer() + ticksPerSecond - 1) / ticksPerSecond;
+            if (!text.isEmpty()) {
+                text += "    ";
+            }
+            text += "Speed Buff " + seconds + "s";
+        }
+        if (fighter.getDamageBoostTimer() > 0) {
+            int seconds = (fighter.getDamageBoostTimer() + ticksPerSecond - 1) / ticksPerSecond;
+            if (!text.isEmpty()) {
+                text += "    ";
+            }
+            text += "Damage Buff " + seconds + "s";
+        }
+        if (text.isEmpty()) {
+            return;
+        }
+
+        g.setFont(new Font("Arial", Font.BOLD, 26));
+        int drawX = alignRight ? x - g.getFontMetrics().stringWidth(text) : x;
+
+        drawShadowText(g, text, drawX, y);
+    }
+    private void drawHealthBar(Graphics g, int x, Fighter fighter, String label) {
+        final int width = 400;
+        final int height = 40;
+        final int y = 60;
+
+        int currentHP = fighter.getHP();
+        int maxHP = fighter.getMaxHP();
+        int hpWidth = (int) ((double) currentHP / maxHP * width);
+
+        g.setColor(Color.WHITE);
+        g.drawRect(x, y, width, height);
+
+        if (currentHP > maxHP * 0.6) {
+            g.setColor(Color.GREEN);
+        } else if (currentHP > maxHP * 0.3) {
+            g.setColor(Color.YELLOW);
+        } else {
+            g.setColor(Color.RED);
+        }
+        g.fillRect(x + 1, y + 1, hpWidth - 1, height - 1);
+
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        drawShadowText(g, label, x, y - 10);
+    }
+    private void drawShadowText(Graphics g, String text, int x, int y) {
+        g.setColor(Color.BLACK);
+        g.drawString(text, x + 2, y + 2);
+        g.setColor(Color.WHITE);
+        g.drawString(text, x, y);
     }
     private void drawGameOver(Graphics g) {
-        g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 80));
 
         int textWidth = g.getFontMetrics().stringWidth(winnerText);
-        g.drawString(winnerText, (GameConfig.WIDTH - textWidth) / 2, 480);
+        drawShadowText(g, winnerText, (GameConfig.WIDTH - textWidth) / 2, 480);
     }
     private void drawPaused(Graphics g) {
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, GameConfig.WIDTH, GameConfig.HEIGHT);
 
-        g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 100));
         String text = "PAUSED";
         int textWidth = g.getFontMetrics().stringWidth(text);
-        g.drawString(text, (GameConfig.WIDTH - textWidth) / 2, 560);
+        drawShadowText(g, text, (GameConfig.WIDTH - textWidth) / 2, 560);
     }
     private void drawBullet(Graphics g) {
         for (Bullet bullet : bullets) {

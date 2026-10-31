@@ -1,7 +1,7 @@
 package src.fighter;
 
-import src.core.Assets;
-import src.core.GameConfig;
+import src.util.Assets;
+import src.util.GameConfig;
 import src.weapon.Bullet;
 import src.weapon.Weapon;
 
@@ -10,8 +10,6 @@ import java.awt.*;
 public abstract class Fighter {
 
     private static final int GRAVITY = 2;
-    private static final int SPRITE_SIZE = 240;
-    private static final int SPRITE_PIXELS = 64;
     private static final int WALK_FRAME_COUNT = 4;
     private static final int WALK_FRAME_TICKS = 6;
 
@@ -99,16 +97,19 @@ public abstract class Fighter {
     }
 
     public void draw(Graphics g) {
+        final int spriteSize = 240;
+        final int spritePixels = 64;
+
         Image image = getCurrentImage();
         if (image != null) {
-            int drawX = x + width / 2 - SPRITE_SIZE / 2;
-            int drawY = y + height - SPRITE_SIZE;
-            int drawW = image.getWidth(null) * SPRITE_SIZE / SPRITE_PIXELS;   // attack.png is wider than 64px
+            int drawX = x + width / 2 - spriteSize / 2;
+            int drawY = y + height - spriteSize;
+            int drawW = image.getWidth(null) * spriteSize / spritePixels;
 
             if (facingDirection == 1) {
-                g.drawImage(image, drawX, drawY, drawW, SPRITE_SIZE, null);
+                g.drawImage(image, drawX, drawY, drawW, spriteSize, null);
             } else {
-                g.drawImage(image, drawX + SPRITE_SIZE, drawY, -drawW, SPRITE_SIZE, null);
+                g.drawImage(image, drawX + spriteSize, drawY, -drawW, spriteSize, null);
             }
         }
 
@@ -248,6 +249,7 @@ public abstract class Fighter {
     }
 
     public int getSpeedBoostTimer() { return speedBoostTimer; }
+    public int getDamageBoostTimer() { return damageBoostTimer; }
 
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
