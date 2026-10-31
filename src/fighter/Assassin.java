@@ -1,13 +1,11 @@
 package src.fighter;
 
-import src.core.Assets;
-
 import java.awt.Color;
 
 public class Assassin extends Fighter {
 
     public Assassin(int startX, Color color) {
-        super(startX, color, 80, Assets.loadImage("/res/fighter/assassin02.png"));
+        super(startX, color, 80, "assassin");
     }
 
     @Override

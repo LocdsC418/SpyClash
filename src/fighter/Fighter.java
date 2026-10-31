@@ -1,22 +1,35 @@
 package src.fighter;
 
+import src.core.Assets;
 import src.core.GameConfig;
 import src.weapon.Bullet;
 import src.weapon.Weapon;
 
 import java.awt.*;
 
-public abstract class Fighter implements Movable, Attackable {
+public abstract class Fighter {
 
     private static final int GRAVITY = 2;
+    private static final int SPRITE_SIZE = 240;
+    private static final int SPRITE_PIXELS = 64;
+    private static final int WALK_FRAME_COUNT = 4;
+    private static final int WALK_FRAME_TICKS = 6;
 
     private int x;
     private int y;
     private int width = 120;
-    private int height = 240;
+    private int height = 216;
     private int velocityY = 0;
     private Color color;
-    private Image fighterImage;
+
+    private String spritePath;
+    private Image idleImage;
+    private Image attackImage;
+    private Image hurtImage;
+    private Image[] walkFrames = new Image[WALK_FRAME_COUNT];
+    private int walkFrame = 0;
+    private int walkTick = 0;
+    private boolean walking = false;
 
     private int stunTimer = 0;
     private int knockbackX = 0;
@@ -51,13 +64,20 @@ public abstract class Fighter implements Movable, Attackable {
 
     public abstract boolean canDoubleJump();
 
-    public Fighter(int startX, Color color, int maxHP, Image figherImage) {
+    public Fighter(int startX, Color color, int maxHP, String spriteFolder) {
         this.x = startX;
         this.y = GameConfig.GROUND - height;
         this.color = color;
         this.maxHP = maxHP;
         this.hp = maxHP;
-        this.fighterImage = figherImage;
+
+        spritePath = "/res/fighter/" + spriteFolder + "/";
+        idleImage = Assets.loadImage(spritePath + "idle.png");
+        attackImage = Assets.loadImage(spritePath + "attack.png");
+        hurtImage = Assets.loadImage(spritePath + "hurt.png");
+        for (int i = 0; i < walkFrames.length; i++) {
+            walkFrames[i] = Assets.loadImage(spritePath + "walk" + (i + 1) + ".png");
+        }
     }
 
     public void update() {
@@ -65,6 +85,7 @@ public abstract class Fighter implements Movable, Attackable {
         updateBuff();
         updateKnockback();
 
+        walking = false;
         if (stunTimer > 0) {
             updateStun();
         } else {
@@ -73,15 +94,21 @@ public abstract class Fighter implements Movable, Attackable {
         }
 
         updateGravity();
+        updateAnimation();
         checkPosition();
     }
 
     public void draw(Graphics g) {
-        if (fighterImage != null) {
+        Image image = getCurrentImage();
+        if (image != null) {
+            int drawX = x + width / 2 - SPRITE_SIZE / 2;
+            int drawY = y + height - SPRITE_SIZE;
+            int drawW = image.getWidth(null) * SPRITE_SIZE / SPRITE_PIXELS;   // attack.png is wider than 64px
+
             if (facingDirection == 1) {
-                g.drawImage(fighterImage, x, y, width, height, null);
+                g.drawImage(image, drawX, drawY, drawW, SPRITE_SIZE, null);
             } else {
-                g.drawImage(fighterImage, x+width, y, -(width), height, null);
+                g.drawImage(image, drawX + SPRITE_SIZE, drawY, -drawW, SPRITE_SIZE, null);
             }
         }
 
@@ -91,11 +118,8 @@ public abstract class Fighter implements Movable, Attackable {
         if (isLongRange()) return;
         if (attacking) {
             g.setColor(getAttackColor());
-            if (facingDirection == 1) {
-                g.fillRect(x + width, y + 20, getFinalAttackRange(), 30);
-            } else {
-                g.fillRect(x - getFinalAttackRange(), y + 20, getFinalAttackRange(), 30);
-            }
+            int attackX = (facingDirection == 1) ? x + width : x - getFinalAttackRange();
+            g.drawRect(attackX, y + 60, getFinalAttackRange(), 120);
         }
     }
 
@@ -107,7 +131,6 @@ public abstract class Fighter implements Movable, Attackable {
         knockbackX = knockback;
     }
 
-    @Override
     public void attack() {
         if (!attacking) {
             attacking = true;
@@ -118,7 +141,6 @@ public abstract class Fighter implements Movable, Attackable {
             }
         }
     }
-    @Override
     public void jump() {
         int maxJump = canDoubleJump() ? 2 : 1;
         if (jumpCount < maxJump) {
@@ -127,20 +149,16 @@ public abstract class Fighter implements Movable, Attackable {
             jumpCount++;
         }
     }
-    @Override
     public void takeDamage(int damage) {
         hp -= damage;
         if (hp < 0) {
             hp = 0;
         }
     }
-    @Override
     public boolean isAlive() { return hp > 0; }
-    @Override
     public void setLeftPressed(boolean pressed) {
         this.leftPressed = pressed;
     }
-    @Override
     public void setRightPressed(boolean pressed) {
         this.rightPressed = pressed;
     }
@@ -162,9 +180,9 @@ public abstract class Fighter implements Movable, Attackable {
             return null;
         }
         if (facingDirection == 1) {
-            return new Rectangle(x + width, y + 20, getFinalAttackRange(), 30);
+            return new Rectangle(x + width, y + 60, getFinalAttackRange(), 120);
         } else {
-            return new Rectangle(x - getFinalAttackRange(), y + 20, getFinalAttackRange(), 30);
+            return new Rectangle(x - getFinalAttackRange(), y + 60, getFinalAttackRange(), 120);
         }
     }
     public Rectangle getBodyHitbox() {
@@ -229,6 +247,8 @@ public abstract class Fighter implements Movable, Attackable {
         return stunTimer > 0;
     }
 
+    public int getSpeedBoostTimer() { return speedBoostTimer; }
+
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
 
@@ -271,7 +291,37 @@ public abstract class Fighter implements Movable, Attackable {
                 x += getSpeed() + speedBoost;
                 facingDirection = 1;
             }
+            walking = leftPressed != rightPressed;
         }
+    }
+    private void updateAnimation() {
+        if (walking && onGround) {
+            walkTick++;
+            if (walkTick >= WALK_FRAME_TICKS) {
+                walkTick = 0;
+                walkFrame = (walkFrame + 1) % walkFrames.length;
+            }
+        } else {
+            walkTick = 0;
+            walkFrame = 0;
+        }
+    }
+    private Image getCurrentImage() {
+        if (isStunned() && hurtImage != null) {
+            return hurtImage;
+        }
+        if (attacking) {
+            Image image = hasWeapon()
+                    ? Assets.loadImage(spritePath + "attack_" + weapon.getName().toLowerCase() + ".png")
+                    : attackImage;
+            if (image != null) {
+                return image;
+            }
+        }
+        if (walking && onGround) {
+            return walkFrames[walkFrame];
+        }
+        return idleImage;
     }
     private void updateAttack() {
         if (attacking) {

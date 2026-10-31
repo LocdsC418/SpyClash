@@ -21,16 +21,28 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     private static final int FREEZE_DURATION = 6;
     private static final int SPAWN_INTERVAL = 300;
+    private static final int BTN_W = 200;
+    private static final int BTN_H = 55;
+    private static final int BTN_GAP = 20;
+    private static final int BTN_Y = 420;
+    private static final int PAUSE_W = 140;
+    private static final int PAUSE_H = 45;
+    private static final int PAUSE_Y = 20;
 
     private Image bgStage;
     private Timer timer;
     private Random random = new Random();
-    private Runnable onRestart;
+    private JButton btnPlayAgain;
+    private JButton btnMenu;
+    private JButton btnPause;
+    private JButton btnResume;
 
     private Fighter player1;
     private Fighter player2;
     private HealthBar hpBar1;
     private HealthBar hpBar2;
+    private ItemStatus itemStatus1;
+    private ItemStatus itemStatus2;
 
     private ArrayList<Bullet> bullets = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
@@ -38,15 +50,22 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private int freezeTimer = 0;
     private int spawnTimer = 0;
     private boolean gameOver = false;
+    private boolean paused = false;
     private String winnerText = "";
 
     public GamePanel(){
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);
-        this.setBackground(Color.BLACK);
-        this.setFocusable(true);
-        this.addKeyListener(this);
+        this.setPreferredSize(GameConfig.SCREEN_SIZE);   // size the window uses when pack() is called
+        this.setBackground(Color.BLACK);                 // colour behind everything that is drawn
+        this.setFocusable(true);                         // panel can take keyboard focus, needed for key input
+        this.addKeyListener(this);                       // keyPressed()/keyReleased() get the key events
+        this.setLayout(null);                            // no layout manager, buttons are placed with setBounds
 
-        bgStage = Assets.loadImage("/res/background/rooftop.png");
+        int x = (GameConfig.WINDOW_WIDTH - (BTN_W * 2 + BTN_GAP)) / 2;
+        btnPlayAgain = createGameOverButton("PLAY AGAIN", x);
+        btnMenu = createGameOverButton("MENU", x + BTN_W + BTN_GAP);
+
+        btnPause = createPauseButton("PAUSE");
+        btnResume = createPauseButton("RESUME");
 
         timer = new Timer(16, this);
     }
@@ -83,29 +102,31 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
 
 
-        Graphics2D g2d = (Graphics2D) g;
+        Graphics2D g2d = (Graphics2D) g.create();
         double scaleX = (double) getWidth() / GameConfig.WIDTH;
         double scaleY = (double) getHeight() / GameConfig.HEIGHT;
         g2d.scale(scaleX, scaleY);
 
-        drawArena(g);
+        drawArena(g2d);
 
-        drawFighter(g);
-        drawBullet(g);
-        drawItem(g);
-        drawHUD(g);
+        drawFighter(g2d);
+        drawBullet(g2d);
+        drawItem(g2d);
+        drawHUD(g2d);
 
         if (gameOver) {
-            drawGameOver(g);
+            drawGameOver(g2d);
+        } else if (paused) {
+            drawPaused(g2d);
         }
+
+        g2d.dispose();
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
 
-        if (e.getKeyCode() == KeyEvent.VK_R && gameOver) {
-            timer.stop();
-            onRestart.run();
+        if (gameOver || paused) {
             return;
         }
 
@@ -164,27 +185,100 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private Fighter createFighter(int choice, int startX, Color color) {
         if (choice == 0) {
             return new Assassin(startX, color);
-        } else {
+        } else if(choice == 1) {
             return new Enforcer(startX, color);
+        } else {
+            return null;
         }
     }
 
-    public void startGame(int p1Choice, int p2Choice) {
+    private String createBgStage(int choice) {
+        if (choice == 0) {
+            return "/res/background/rooftop.png";
+        } else if (choice == 1) {
+            return "/res/background/rooftop_morning.png";
+        } else {
+            return "FAILED";
+        }
+    }
+
+    public void startGame(int p1Choice, int p2Choice, int mapChoice) {
 
         items.clear();
         bullets.clear();
         spawnTimer = 0;
 
+        bgStage = Assets.loadImage(createBgStage(mapChoice));
         player1 = createFighter(p1Choice, 200, Color.RED);
         player2 = createFighter(p2Choice, 1600, Color.BLUE);
         player2.setFacingDirection(-1);
 
         hpBar1 = new HealthBar(40, 60);
         hpBar2 = new HealthBar(1480, 60);
+        itemStatus1 = new ItemStatus(40, 138, false);
+        itemStatus2 = new ItemStatus(1880, 138, true);
         gameOver = false;
+        paused = false;
         winnerText = "";
+        btnPlayAgain.setVisible(false);
+        btnMenu.setVisible(false);
+        btnPause.setVisible(true);
+        btnResume.setVisible(false);
         timer.start();
 
+    }
+
+    public void pause() {
+        if (gameOver || paused) {
+            return;
+        }
+        paused = true;
+        timer.stop();
+
+        player1.setLeftPressed(false);
+        player1.setRightPressed(false);
+        player2.setLeftPressed(false);
+        player2.setRightPressed(false);
+
+        btnPause.setVisible(false);
+        btnResume.setVisible(true);
+        repaint();
+    }
+
+    public void resume() {
+        if (!paused) {
+            return;
+        }
+        paused = false;
+        btnResume.setVisible(false);
+        btnPause.setVisible(true);
+        timer.start();
+        this.requestFocusInWindow();
+    }
+
+    public JButton getPlayAgainButton() { return btnPlayAgain; }
+    public JButton getMenuButton() { return btnMenu; }
+    public JButton getPauseButton() { return btnPause; }
+    public JButton getResumeButton() { return btnResume; }
+
+    private JButton createPauseButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 20));
+        button.setFocusable(false);   // clicking it must not take keyboard focus away from the game
+        button.setBounds((GameConfig.WINDOW_WIDTH - PAUSE_W) / 2, PAUSE_Y, PAUSE_W, PAUSE_H);
+        button.setVisible(false);     // hidden until startGame() shows it
+        this.add(button);
+        return button;
+    }
+
+    private JButton createGameOverButton(String text, int x) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 24));
+        button.setFocusPainted(false);   // no focus rectangle around the label after clicking
+        button.setBounds(x, BTN_Y, BTN_W, BTN_H);
+        button.setVisible(false);     // hidden until the game is over
+        this.add(button);
+        return button;
     }
 
     private void drawArena(Graphics g) {
@@ -207,6 +301,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     private void drawHUD(Graphics g) {
         hpBar1.draw(g, player1.getHP(), player1.getMaxHP(), "Player1: " + player1.getName() + "[WASD + F]");
         hpBar2.draw(g, player2.getHP(), player2.getMaxHP(), "Player2: " + player2.getName() + "[Arrow + /]");
+        itemStatus1.draw(g, player1);
+        itemStatus2.draw(g, player2);
     }
     private void drawGameOver(Graphics g) {
         g.setColor(Color.WHITE);
@@ -214,11 +310,16 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         int textWidth = g.getFontMetrics().stringWidth(winnerText);
         g.drawString(winnerText, (GameConfig.WIDTH - textWidth) / 2, 480);
+    }
+    private void drawPaused(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, GameConfig.WIDTH, GameConfig.HEIGHT);
 
-        g.setFont(new Font("Arial", Font.PLAIN, 40));
-        String restart = "Press R to restart";
-        int restartWidth = g.getFontMetrics().stringWidth(restart);
-        g.drawString(restart, (GameConfig.WIDTH - restartWidth) / 2, 550);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 100));
+        String text = "PAUSED";
+        int textWidth = g.getFontMetrics().stringWidth(text);
+        g.drawString(text, (GameConfig.WIDTH - textWidth) / 2, 560);
     }
     private void drawBullet(Graphics g) {
         for (Bullet bullet : bullets) {
@@ -295,6 +396,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             gameOver = true;
             winnerText = "Player 1 wins!";
         }
+
+        if (gameOver) {
+            timer.stop();
+            btnPause.setVisible(false);
+            btnPlayAgain.setVisible(true);
+            btnMenu.setVisible(true);
+        }
     }
     private void handlePlayerCollision() {
         Rectangle body1 = player1.getBodyHitbox();
@@ -349,10 +457,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         target.getKnockBack(20 * direction);
         target.getStunned(10);
-    }
-
-    public void setOnRestart(Runnable onRestart) {
-        this.onRestart = onRestart;
     }
 
 }

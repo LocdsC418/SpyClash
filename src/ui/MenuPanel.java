@@ -1,79 +1,55 @@
 package src.ui;
 
+import src.core.Assets;
 import src.core.GameConfig;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-public class MenuPanel extends JPanel implements KeyListener {
+public class MenuPanel extends JPanel {
 
-    private final String[] options = {"Player vs Player", "Player vs Com", "Quit"};
+    private static final int BTN_W = 300;
+    private static final int BTN_H = 80;
+    private static final int BTN_GAP = 20;
+    private static final int BTN_START_Y = 320;
 
     private Image bgMenu;
-    private Runnable onPvP;
-    private Runnable onPvC;
+    private JButton btnPvP;
+    private JButton btnQuit;
 
-    private int selected = 0;
+    public MenuPanel() {
+        this.setPreferredSize(GameConfig.SCREEN_SIZE);   // size the window uses when pack() is called
+        this.setBackground(Color.BLACK);                 // colour behind everything that is drawn
+        this.setLayout(null);                            // no layout manager, buttons are placed with setBounds
 
-    public MenuPanel(Runnable onPvP, Runnable onPvC) {
-        this.onPvP = onPvP;
-        this.onPvC = onPvC;
-        this.setPreferredSize(GameConfig.SCREEN_SIZE);
-        this.setFocusable(true);
-        this.addKeyListener(this);
+        bgMenu = Assets.loadImage("/res/menu/menu_bg.jpg");
+
+        btnPvP = createMenuButton("Player vs Player");
+        btnQuit = createMenuButton("Quit");
+
+        int x = (GameConfig.WINDOW_WIDTH - BTN_W) / 2;
+        btnPvP.setBounds(x, BTN_START_Y, BTN_W, BTN_H);                       // x, y, width, height on the panel
+        btnQuit.setBounds(x, BTN_START_Y + (BTN_H + BTN_GAP), BTN_W, BTN_H);
+
+        this.add(btnPvP);   // add() puts the button on the panel so it shows up
+        this.add(btnQuit);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.scale((double) getWidth() / GameConfig.WIDTH, (double) getHeight() / GameConfig.HEIGHT);
-
-        int w = 400, h = 90, gap = 30;
-        int x = (GameConfig.WIDTH / 2 ) - (w / 2);
-        g2.setFont(new Font("Arial", Font.BOLD, 32));
-
-        for (int i = 0; i<options.length ; i++) {
-            int y = 480 + i * (h + gap);
-
-            g2.setColor(i == selected ? Color.YELLOW : Color.WHITE);
-            g2.fillRoundRect(x, y, w, h, 40, 40);
-            g2.setColor(Color.BLACK);
-            g2.setStroke(new BasicStroke(4));
-            g2.drawRoundRect(x, y, w, h, 40, 40);
-
-            int textWidth = g2.getFontMetrics().stringWidth(options[i]);
-            g2.drawString(options[i], x + (w - textWidth) / 2, y + 58);
+        if (bgMenu != null) {
+            g.drawImage(bgMenu, 0, 0, getWidth(), getHeight(), this);
         }
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
-            selected = (selected - 1 + options.length) % options.length;
-        } else if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
-            selected = (selected + 1) % options.length;
-        }
+    public JButton getPvPButton() { return btnPvP; }
+    public JButton getQuitButton() { return btnQuit; }
 
-        repaint();
+    private JButton createMenuButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 24));
+        button.setFocusPainted(false);   // no focus rectangle around the label after clicking
+        return button;
     }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_ENTER) {
-            if (selected == 0) onPvP.run();
-            else if (selected == 1) onPvC.run();
-            else System.exit(0);
-        }
-
-        repaint();
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
 }

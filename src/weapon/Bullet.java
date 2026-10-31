@@ -5,6 +5,9 @@ import src.fighter.Fighter;
 import java.awt.*;
 
 public class Bullet {
+    private static final int MUZZLE_OFFSET_X = 75;
+    private static final int MUZZLE_HEIGHT = 140;   // measured up from the feet
+
     private Fighter owner;
     private int x;
     private int y;
@@ -24,12 +27,12 @@ public class Bullet {
         this.maxRange = 2000;
 
         if (direction == 1) {
-            this.x = owner.getX() + owner.getWidth();
+            this.x = owner.getX() + owner.getWidth() + MUZZLE_OFFSET_X;
         } else {
-            this.x = owner.getX() - width;
+            this.x = owner.getX() - MUZZLE_OFFSET_X - width;
         }
 
-        this.y = owner.getY() + 20;
+        this.y = owner.getY() + owner.getHeight() - MUZZLE_HEIGHT;
     }
 
     public void update() {
